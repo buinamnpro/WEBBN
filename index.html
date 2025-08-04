@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 LMS Questions Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="title">
+                        📊 LMS Questions Dashboard
+                    </h1>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Questions:</span>
+                            <span class="stat-value" id="totalQuestions">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Real-time:</span>
+                            <span class="stat-value" id="realtimeStatus">🔄 CONNECTING...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button id="clearAllBtn" class="clear-all-btn">
+                        🗑️ Clear All
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Loading -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading questions...</p>
+            </div>
+
+            <!-- Questions List -->
+            <div id="questionsList" class="questions-list" style="display: none;">
+                <!-- Questions will be inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon">📝</div>
+                <h3>No questions yet</h3>
+                <p>Questions will appear here when you use the Chrome extension</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>🔄 Auto-refresh every 5 seconds</p>
+                <p>Last updated: <span id="lastUpdated">Never</span></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>⚠️ Confirm Clear All</h3>
+            <p>Are you sure you want to delete ALL questions? This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button id="confirmClearBtn" class="btn-danger">🗑️ Yes, Clear All</button>
+                <button id="cancelClearBtn" class="btn-secondary">❌ Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Sound -->
+    <audio id="notificationSound" preload="auto">
+        <source
+            src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT"
+            type="audio/wav">
+    </audio>
+
+    <!-- Supabase Config -->
+    <script src="supabase-config.js"></script>
+    <!-- Main Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
