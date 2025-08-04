@@ -232,17 +232,14 @@ class LMSDashboard {
                     text += `   ${answerIndex + 1}. ${cleanAnswer}${isSelected ? ' (Selected)' : ''}\n`;
                 });
             });
-        } else if ((question.dragdropV2 && Array.isArray(question.dragdropV2)) || (question.dragdropv2 && Array.isArray(question.dragdropv2))) {
-            const dragdropV2Data = question.dragdropV2 || question.dragdropv2;
-            const dragdropV2Dict = question.dragdropV2_dictionary || question.dragdropv2_dictionary;
-
+        } else if (question.dragdropV2 && Array.isArray(question.dragdropV2)) {
             text += `Drag & Drop V2:\n`;
-            dragdropV2Data.forEach((drop, index) => {
+            question.dragdropV2.forEach((drop, index) => {
                 text += `\n${index + 1}. ${drop.question}\n`;
                 text += `   Answers: ${drop.answers.join(', ')}\n`;
             });
-            if (dragdropV2Dict) {
-                text += `\nDictionary: ${dragdropV2Dict.join(', ')}\n`;
+            if (question.dragdropV2_dictionary) {
+                text += `\nDictionary: ${question.dragdropV2_dictionary.join(', ')}\n`;
             }
         } else if (question.dragdrop && Array.isArray(question.dragdrop)) {
             text += `Drag & Drop:\n`;
@@ -288,22 +285,19 @@ class LMSDashboard {
                     `).join('')}
                 </div>
             `;
-        } else if ((question.dragdropV2 && Array.isArray(question.dragdropV2)) || (question.dragdropv2 && Array.isArray(question.dragdropv2))) {
-            const dragdropV2Data = question.dragdropV2 || question.dragdropv2;
-            const dragdropV2Dict = question.dragdropV2_dictionary || question.dragdropv2_dictionary;
-
+        } else if (question.dragdropV2 && Array.isArray(question.dragdropV2)) {
             answersHtml = `
                 <div class="question-answers">
                     <div class="answers-title">Drag & Drop V2:</div>
-                    ${dragdropV2Data.map(drop => `
+                    ${question.dragdropV2.map(drop => `
                         <div class="answer-item">
                             <strong>${this.escapeHtml(drop.question)}</strong><br>
                             Answers: ${drop.answers.map(answer => this.escapeHtml(answer)).join(', ')}
                         </div>
                     `).join('')}
                     <div class="answer-item">
-                        <strong>Dictionary:</strong> ${dragdropV2Dict ?
-                    dragdropV2Dict.map(item => this.escapeHtml(item)).join(', ') :
+                        <strong>Dictionary:</strong> ${question.dragdropV2_dictionary ?
+                    question.dragdropV2_dictionary.map(item => this.escapeHtml(item)).join(', ') :
                     'No dictionary'
                 }
                     </div>
@@ -525,7 +519,7 @@ class LMSDashboard {
 
         } catch (error) {
             console.error('❌ Error in clearAllQuestions:', error);
-            this.showNotification('❌ Failed to clear questions: ' + error.message);
+            this.showNotification('❌ Failed to clear questions');
         }
     }
 }
