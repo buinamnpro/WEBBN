@@ -163,12 +163,41 @@ class LMSDashboard {
         const questionCards = document.querySelectorAll('.question-card');
 
         questionCards.forEach(card => {
-            // Click to copy
-            card.addEventListener('click', () => {
+            let touchStartTime = 0;
+            let touchStartY = 0;
+
+            // Handle both click and touch events for better mobile support
+            const handleCopy = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 this.copyQuestionContent(card);
+            };
+
+            // Click event for desktop
+            card.addEventListener('click', handleCopy);
+
+            // Touch events for mobile
+            card.addEventListener('touchstart', (e) => {
+                touchStartTime = Date.now();
+                touchStartY = e.touches[0].clientY;
+                card.style.transform = 'scale(0.98)';
             });
 
-            // Add click feedback
+            card.addEventListener('touchend', (e) => {
+                const touchEndTime = Date.now();
+                const touchEndY = e.changedTouches[0].clientY;
+                const touchDuration = touchEndTime - touchStartTime;
+                const touchDistance = Math.abs(touchEndY - touchStartY);
+
+                // Only trigger copy if it's a quick tap (not a scroll)
+                if (touchDuration < 300 && touchDistance < 10) {
+                    handleCopy(e);
+                }
+
+                card.style.transform = '';
+            });
+
+            // Mouse events for desktop feedback
             card.addEventListener('mousedown', () => {
                 card.style.transform = 'scale(0.98)';
             });
@@ -180,6 +209,14 @@ class LMSDashboard {
             card.addEventListener('mouseleave', () => {
                 card.style.transform = '';
             });
+
+            // Prevent default behavior for links inside cards
+            const links = card.querySelectorAll('a');
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            });
         });
     }
 
@@ -188,26 +225,65 @@ class LMSDashboard {
             const questionData = JSON.parse(card.dataset.questionData);
             const copyText = this.formatQuestionForCopy(questionData);
 
-            // Copy to clipboard
-            navigator.clipboard.writeText(copyText).then(() => {
-                // Show copy indicator
-                const indicator = card.querySelector('.copy-indicator');
+            // Show copy indicator immediately for better UX
+            const indicator = card.querySelector('.copy-indicator');
+            if (indicator) {
+                indicator.style.display = 'block';
+            }
+
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(copyText).then(() => {
+                    console.log('📋 Copied question content to clipboard');
+                    this.showNotification('📋 Copied to clipboard!');
+                }).catch(err => {
+                    console.error('❌ Failed to copy with clipboard API:', err);
+                    // Fallback to old method
+                    this.fallbackCopyTextToClipboard(copyText);
+                });
+            } else {
+                // Fallback for older browsers
+                this.fallbackCopyTextToClipboard(copyText);
+            }
+
+            // Hide indicator after 2 seconds
+            setTimeout(() => {
                 if (indicator) {
-                    indicator.style.display = 'block';
-
-                    // Hide after 2 seconds
-                    setTimeout(() => {
-                        indicator.style.display = 'none';
-                    }, 2000);
+                    indicator.style.display = 'none';
                 }
+            }, 2000);
 
-                console.log('📋 Copied question content to clipboard');
-            }).catch(err => {
-                console.error('❌ Failed to copy:', err);
-                this.showNotification('Failed to copy to clipboard');
-            });
         } catch (error) {
             console.error('❌ Error copying question:', error);
+            this.showNotification('❌ Failed to copy question');
+        }
+    }
+
+    fallbackCopyTextToClipboard(text) {
+        try {
+            // Create temporary textarea element
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            if (successful) {
+                console.log('📋 Copied question content to clipboard (fallback)');
+                this.showNotification('📋 Copied to clipboard!');
+            } else {
+                console.error('❌ Failed to copy with fallback method');
+                this.showNotification('❌ Failed to copy to clipboard');
+            }
+        } catch (err) {
+            console.error('❌ Error in fallback copy:', err);
+            this.showNotification('❌ Failed to copy to clipboard');
         }
     }
 

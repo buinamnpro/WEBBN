@@ -260,6 +260,9 @@ body {
     position: relative;
     cursor: pointer;
     user-select: none;
+    /* Improve touch experience on mobile */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .question-card:hover {
@@ -518,6 +521,8 @@ body {
     
     .question-card {
         padding: 20px;
+        /* Better touch targets on mobile */
+        min-height: 60px;
     }
     
     .question-header {
@@ -535,6 +540,12 @@ body {
     .question-card:hover::before {
         display: none;
     }
+
+    /* Improve touch feedback on mobile */
+    .question-card:active {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.98);
+    }
 }
 
 @media (max-width: 480px) {
@@ -549,11 +560,19 @@ body {
     
     .question-card {
         padding: 15px;
+        /* Even better touch targets for very small screens */
+        min-height: 80px;
     }
     
     .copy-indicator {
         position: static;
         margin-top: 10px;
         text-align: center;
+        /* Better visibility on mobile */
+        background: #48bb78;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 600;
     }
 } 
