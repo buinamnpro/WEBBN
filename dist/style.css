@@ -575,4 +575,27 @@ body {
         border-radius: 8px;
         font-weight: 600;
     }
-} 
+}
+
+/* Group Input Specific Styles */
+.answer-text {
+    color: #2d3748;
+    font-weight: 500;
+    background: #f7fafc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #4299e1;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+.no-answer {
+    color: #a0aec0;
+    font-style: italic;
+    background: #f7fafc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #e2e8f0;
+    margin-top: 5px;
+    display: inline-block;
+}

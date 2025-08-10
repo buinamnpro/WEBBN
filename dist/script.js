@@ -48,6 +48,11 @@ class LMSDashboard {
             const questions = await window.SupabaseConfig.getQuestions();
             this.questions = questions;
 
+            // Debug: Log first question to see structure
+            if (questions.length > 0) {
+                console.log('🔍 First question structure:', questions[0]);
+            }
+
             this.updateQuestionCount();
             this.renderQuestions();
             this.updateLastUpdated();
@@ -329,6 +334,15 @@ class LMSDashboard {
             if (question.dragdrop_dictionary) {
                 text += `\nDictionary: ${question.dragdrop_dictionary.join(', ')}\n`;
             }
+        } else if ((question.group_input && Array.isArray(question.group_input)) || (question.groupinput && Array.isArray(question.groupinput))) {
+            const groupInputData = question.group_input || question.groupinput;
+            text += `Group Input:\n`;
+            groupInputData.forEach((input, index) => {
+                text += `\n${index + 1}. ${input.question}\n`;
+                if (input.answer) {
+                    text += `   Answer: ${input.answer}\n`;
+                }
+            });
         }
 
         return text;
@@ -401,6 +415,19 @@ class LMSDashboard {
                     'No dictionary'
                 }
                     </div>
+                </div>
+            `;
+        } else if ((question.group_input && Array.isArray(question.group_input)) || (question.groupinput && Array.isArray(question.groupinput))) {
+            const groupInputData = question.group_input || question.groupinput;
+            answersHtml = `
+                <div class="question-answers">
+                    <div class="answers-title">Group Input:</div>
+                    ${groupInputData.map(input => `
+                        <div class="answer-item">
+                            <strong>${this.escapeHtml(input.question)}</strong><br>
+                            ${input.answer ? `<span class="answer-text">${this.escapeHtml(input.answer)}</span>` : '<span class="no-answer">No answer provided</span>'}
+                        </div>
+                    `).join('')}
                 </div>
             `;
         }
