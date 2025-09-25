@@ -1,656 +1,307 @@
-// LMS Dashboard Main Script
-class LMSDashboard {
-    constructor() {
-        this.questions = [];
-        this.subscription = null;
-        this.lastUpdateTime = null;
-        this.isConnected = false;
-        this.copyTimeout = null;
+(function () {
+    const sheetUrlInput = document.getElementById('sheetUrl');
+    const loadBtn = document.getElementById('loadBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const loadLocalBtn = document.getElementById('loadLocalBtn');
+    const statusEl = document.getElementById('status');
+    const card = document.getElementById('card');
+    const hanziEl = document.getElementById('hanzi');
+    const optionsEl = document.getElementById('options');
+    const progressEl = document.getElementById('progress');
+    const scoreEl = document.getElementById('score');
+    const exampleBox = document.getElementById('example');
+    const exMeaningEl = document.getElementById('exMeaning');
+    const exHanziEl = document.getElementById('exHanzi');
+    const exPinyinEl = document.getElementById('exPinyin');
+    const exViEl = document.getElementById('exVi');
 
-        this.init();
+    /** App state */
+    let data = [];              // { hanzi, pinyin, meaningVi, exHanzi, exPinyin, exVi }
+    let currentIndex = -1;      // index vào mảng data
+    let lastIndex = -1;         // để tránh lặp lại ngay
+    let answered = false;       // đã trả lời đúng chưa (để sang câu)
+    let correctCount = 0;       // số câu đúng
+    let questionCount = 0;      // số câu đã hỏi
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+
+    function isLikelyCsvUrl(url) {
+        try {
+            const u = new URL(url);
+            return u.searchParams.get('output') === 'csv' ||
+                u.pathname.endsWith('.csv');
+        } catch { return false; }
     }
 
-    async init() {
-        console.log('🚀 Initializing LMS Dashboard...');
+    async function fetchCsv(url) {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Không thể tải CSV: ' + res.status);
+        return await res.text();
+    }
 
-        // Initialize Supabase
-        const supabaseInitialized = await window.SupabaseConfig.initSupabase();
-        if (!supabaseInitialized) {
-            this.showError('Failed to initialize Supabase');
+    function csvParse(text) {
+        // Parser hỗ trợ dấu ngoặc kép và dấu phẩy trong ô
+        const rows = [];
+        let i = 0, field = '', row = [], inQuotes = false;
+        const pushField = () => { row.push(field); field = ''; };
+        const pushRow = () => { rows.push(row); row = []; };
+        while (i < text.length) {
+            const ch = text[i];
+            if (inQuotes) {
+                if (ch === '"') {
+                    if (text[i + 1] === '"') { field += '"'; i++; } else { inQuotes = false; }
+                } else { field += ch; }
+            } else {
+                if (ch === '"') { inQuotes = true; }
+                else if (ch === ',') { pushField(); }
+                else if (ch === '\n') { pushField(); pushRow(); }
+                else if (ch === '\r') { /* skip */ }
+                else { field += ch; }
+            }
+            i++;
+        }
+        // cuối file
+        if (field.length > 0 || row.length > 0) { pushField(); pushRow(); }
+        // loại bỏ dòng trống hoàn toàn
+        return rows.filter(r => r.some(c => String(c).trim().length));
+    }
+
+    function normalizeHeaderName(name) {
+        return String(name)
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // bỏ dấu
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function parseVietnameseCsv(text) {
+        const rows = csvParse(text);
+        if (!rows.length) return [];
+        const header = rows.shift().map(h => normalizeHeaderName(h));
+        // Tìm các cột
+        const idxWord = header.indexOf('tu moi');
+        // 2 cột "phien am": một cho từ, một cho ví dụ
+        const phienAmIdxs = header.map((h, idx) => h === 'phien am' ? idx : -1).filter(x => x !== -1);
+        const idxExplain = header.indexOf('giai thich');
+        const idxExHanzi = header.findIndex(h => h.startsWith('vi du'));
+        let idxPinyin = phienAmIdxs.length ? phienAmIdxs[0] : -1;
+        let idxExPinyin = -1;
+        if (phienAmIdxs.length > 1) {
+            // chọn cột "phien am" sau cột ví dụ nếu có
+            const afterEx = phienAmIdxs.find(i => i > idxExHanzi);
+            idxExPinyin = (afterEx != null ? afterEx : phienAmIdxs[phienAmIdxs.length - 1]);
+        }
+        const idxExVi = header.indexOf('dich');
+
+        const out = [];
+        for (const r of rows) {
+            const hanzi = (r[idxWord] || '').trim();
+            const pinyin = (r[idxPinyin] || '').trim();
+            const meaningVi = idxExplain >= 0 ? (r[idxExplain] || '').trim() : '';
+            const exHanzi = idxExHanzi >= 0 ? (r[idxExHanzi] || '').trim() : '';
+            const exPinyin = idxExPinyin >= 0 ? (r[idxExPinyin] || '').trim() : '';
+            const exVi = idxExVi >= 0 ? (r[idxExVi] || '').trim() : '';
+            if (hanzi) out.push({ hanzi, pinyin, meaningVi, exHanzi, exPinyin, exVi });
+        }
+        return out;
+    }
+
+    function shuffleInPlace(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function pickNextIndex() {
+        if (data.length === 0) return -1;
+        if (data.length === 1) return 0;
+        let idx = Math.floor(Math.random() * data.length);
+        // tránh trùng ngay câu trước nếu có thể
+        if (idx === lastIndex) {
+            idx = (idx + 1 + Math.floor(Math.random() * (data.length - 1))) % data.length;
+        }
+        return idx;
+    }
+
+    function buildOptions(correctPinyin) {
+        const uniquePinyin = Array.from(new Set(data.map(r => r.pinyin).filter(Boolean)));
+        const distractors = uniquePinyin.filter(p => p !== correctPinyin);
+        shuffleInPlace(distractors);
+        const choices = [correctPinyin, ...distractors.slice(0, 3)];
+        return shuffleInPlace(choices);
+    }
+
+    function renderQuestion() {
+        if (!data.length) return;
+        currentIndex = pickNextIndex();
+        if (currentIndex < 0) return;
+        answered = false;
+        const item = data[currentIndex];
+        hanziEl.textContent = item.hanzi;
+        exampleBox.classList.add('hidden');
+        exMeaningEl.textContent = '';
+        exHanziEl.textContent = '';
+        exPinyinEl.textContent = '';
+        exViEl.textContent = '';
+
+        const options = buildOptions(item.pinyin);
+        if (options.length < 4) {
+            setStatus('Cần ít nhất 4 pinyin khác nhau để tạo đáp án. Hãy bổ sung dữ liệu.');
+            card.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            return;
+        }
+        optionsEl.innerHTML = '';
+        for (let i = 0; i < options.length; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'option';
+            btn.textContent = options[i];
+            btn.dataset.value = options[i];
+            btn.addEventListener('click', () => handleAnswer(btn, item));
+            optionsEl.appendChild(btn);
+        }
+
+        progressEl.textContent = 'Câu: ' + (questionCount + 1);
+        setStatus('Chọn pinyin đúng cho chữ: ' + item.hanzi);
+        nextBtn.classList.remove('hidden');
+        card.classList.remove('hidden');
+    }
+
+    function handleAnswer(buttonEl, item) {
+        if (answered) return;
+        const chosen = buttonEl.dataset.value;
+        const isCorrect = chosen === item.pinyin;
+        if (!isCorrect) {
+            // Sai: đánh dấu nút sai và vô hiệu hóa riêng nút đó, cho chọn lại
+            buttonEl.classList.add('wrong');
+            buttonEl.disabled = true;
             return;
         }
 
-        // Test connection
-        this.isConnected = await window.SupabaseConfig.testConnection();
-        this.updateConnectionStatus();
+        // Đúng: khóa tất cả, đánh dấu đúng và hiển thị ví dụ
+        answered = true;
+        const all = optionsEl.querySelectorAll('.option');
+        all.forEach(b => {
+            b.disabled = true;
+            if (b.dataset.value === item.pinyin) b.classList.add('correct');
+        });
 
-        if (this.isConnected) {
-            // Load initial data
-            await this.loadQuestions();
+        questionCount += 1;
+        correctCount += 1;
+        scoreEl.textContent = 'Đúng: ' + correctCount + '/' + questionCount;
+        lastIndex = currentIndex;
 
-            // Setup real-time subscription
-            this.setupRealtimeSubscription();
+        // Hiển thị ví dụ nếu có
+        exMeaningEl.textContent = item.meaningVi || '—';
+        exHanziEl.textContent = item.exHanzi || '—';
+        exPinyinEl.textContent = item.exPinyin || '—';
+        exViEl.textContent = item.exVi || '—';
+        exampleBox.classList.remove('hidden');
 
-            // Setup auto-refresh
-            this.setupAutoRefresh();
-
-            // Setup clear all functionality
-            this.setupClearAllFunctionality();
-        } else {
-            this.showError('Cannot connect to Supabase');
-        }
+        nextBtn.classList.remove('hidden');
     }
 
-    async loadQuestions() {
+    function nextQuestion() {
+        renderQuestion();
+    }
+
+    async function loadData() {
+        const url = sheetUrlInput.value.trim();
+        if (!url) { setStatus('Không có link. Hãy bấm "Tải CSV nội bộ" hoặc dán link.'); return; }
+        if (!isLikelyCsvUrl(url)) { setStatus('Link chưa đúng định dạng CSV (hãy Publish to the web và chọn CSV).'); }
+        setStatus('Đang tải dữ liệu...');
+        loadBtn.disabled = true;
         try {
-            this.showLoading(true);
-
-            const questions = await window.SupabaseConfig.getQuestions();
-            this.questions = questions;
-
-            // Debug: Log first question to see structure
-            if (questions.length > 0) {
-                console.log('🔍 First question structure:', questions[0]);
-            }
-
-            this.updateQuestionCount();
-            this.renderQuestions();
-            this.updateLastUpdated();
-
-            this.showLoading(false);
-
-            console.log('📦 Loaded questions:', questions.length);
-        } catch (error) {
-            console.error('❌ Error loading questions:', error);
-            this.showError('Failed to load questions');
-        }
-    }
-
-    setupRealtimeSubscription() {
-        try {
-            this.subscription = window.SupabaseConfig.subscribeToQuestions((newQuestion) => {
-                this.handleNewQuestion(newQuestion);
-            });
-
-            console.log('📡 Real-time subscription setup complete');
-        } catch (error) {
-            console.error('❌ Error setting up real-time subscription:', error);
-        }
-    }
-
-    handleNewQuestion(newQuestion) {
-        console.log('🆕 New question received:', newQuestion);
-
-        // Add to beginning of array
-        this.questions.unshift(newQuestion);
-
-        // Update UI
-        this.updateQuestionCount();
-        this.renderQuestions();
-        this.updateLastUpdated();
-
-        // Show notification
-        this.showNotification('New question received!');
-
-        // Play sound
-        this.playNotificationSound();
-
-        // Add new indicator to the first card
-        this.highlightNewQuestion(newQuestion.id);
-    }
-
-    highlightNewQuestion(questionId) {
-        const questionCard = document.querySelector(`[data-question-id="${questionId}"]`);
-        if (questionCard) {
-            questionCard.classList.add('new');
-
-            // Remove highlight after 5 seconds
-            setTimeout(() => {
-                questionCard.classList.remove('new');
-            }, 5000);
-        }
-    }
-
-    renderQuestions() {
-        const questionsList = document.getElementById('questionsList');
-        const emptyState = document.getElementById('emptyState');
-
-        if (this.questions.length === 0) {
-            questionsList.style.display = 'none';
-            emptyState.style.display = 'flex';
-            return;
-        }
-
-        questionsList.style.display = 'flex';
-        emptyState.style.display = 'none';
-
-        questionsList.innerHTML = this.questions.map(question =>
-            this.createQuestionCard(question)
-        ).join('');
-
-        // Setup copy functionality for all question cards
-        this.setupCopyFunctionality();
-    }
-
-    createQuestionCard(question) {
-        const timeAgo = this.getTimeAgo(question.created_at);
-        const questionType = this.getQuestionTypeLabel(question.type);
-        const answersHtml = this.renderAnswers(question);
-
-        return `
-            <div class="question-card" data-question-id="${question.id}" data-question-data='${JSON.stringify(question)}'>
-                <div class="question-header">
-                    <div class="question-id">📝 Question #${question.id}</div>
-                    <div class="question-type">${questionType}</div>
-                    <div class="question-time">${timeAgo}</div>
-                </div>
-                
-                <div class="question-content">
-                    <div class="question-text">${this.escapeHtml(question.main_question)}</div>
-                    ${answersHtml}
-                </div>
-                
-                <div class="question-meta">
-                    <a href="${question.page_url || '#'}" class="question-url" target="_blank">
-                        ${this.escapeHtml(question.page_url || 'No URL')}
-                    </a>
-                    <span>User Agent: ${this.escapeHtml(question.user_agent || 'Unknown')}</span>
-                </div>
-                
-                <div class="copy-indicator" style="display: none;">
-                    📋 Copied to clipboard!
-                </div>
-            </div>
-        `;
-    }
-
-    setupCopyFunctionality() {
-        const questionCards = document.querySelectorAll('.question-card');
-
-        questionCards.forEach(card => {
-            let touchStartTime = 0;
-            let touchStartY = 0;
-
-            // Handle both click and touch events for better mobile support
-            const handleCopy = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.copyQuestionContent(card);
-            };
-
-            // Click event for desktop
-            card.addEventListener('click', handleCopy);
-
-            // Touch events for mobile
-            card.addEventListener('touchstart', (e) => {
-                touchStartTime = Date.now();
-                touchStartY = e.touches[0].clientY;
-                card.style.transform = 'scale(0.98)';
-            });
-
-            card.addEventListener('touchend', (e) => {
-                const touchEndTime = Date.now();
-                const touchEndY = e.changedTouches[0].clientY;
-                const touchDuration = touchEndTime - touchStartTime;
-                const touchDistance = Math.abs(touchEndY - touchStartY);
-
-                // Only trigger copy if it's a quick tap (not a scroll)
-                if (touchDuration < 300 && touchDistance < 10) {
-                    handleCopy(e);
+            const csvText = await fetchCsv(url);
+            // Thử parse theo định dạng tiếng Việt trước, nếu rỗng thì thử hanzi/pinyin chuẩn
+            let rows = parseVietnameseCsv(csvText);
+            if (!rows.length) {
+                rows = [];
+                // Fallback: hanzi,pinyin
+                const simple = csvParse(csvText);
+                if (simple.length > 1) {
+                    const header = simple.shift().map(h => String(h).trim().toLowerCase());
+                    const idxHanzi = header.indexOf('hanzi');
+                    const idxPinyin = header.indexOf('pinyin');
+                    const idxMeaning = header.indexOf('meaning');
+                    for (const r of simple) {
+                        const hanzi = (r[idxHanzi] || '').trim();
+                        const pinyin = (r[idxPinyin] || '').trim();
+                        const meaningVi = idxMeaning >= 0 ? (r[idxMeaning] || '').trim() : '';
+                        if (hanzi) rows.push({ hanzi, pinyin, meaningVi, exHanzi: '', exPinyin: '', exVi: '' });
+                    }
                 }
-
-                card.style.transform = '';
-            });
-
-            // Mouse events for desktop feedback
-            card.addEventListener('mousedown', () => {
-                card.style.transform = 'scale(0.98)';
-            });
-
-            card.addEventListener('mouseup', () => {
-                card.style.transform = 'translateY(-2px)';
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = '';
-            });
-
-            // Prevent default behavior for links inside cards
-            const links = card.querySelectorAll('a');
-            links.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-            });
-        });
-    }
-
-    copyQuestionContent(card) {
-        try {
-            const questionData = JSON.parse(card.dataset.questionData);
-            const copyText = this.formatQuestionForCopy(questionData);
-
-            // Show copy indicator immediately for better UX
-            const indicator = card.querySelector('.copy-indicator');
-            if (indicator) {
-                indicator.style.display = 'block';
             }
-
-            // Try modern clipboard API first
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(copyText).then(() => {
-                    console.log('📋 Copied question content to clipboard');
-                    this.showNotification('📋 Copied to clipboard!');
-                }).catch(err => {
-                    console.error('❌ Failed to copy with clipboard API:', err);
-                    // Fallback to old method
-                    this.fallbackCopyTextToClipboard(copyText);
-                });
-            } else {
-                // Fallback for older browsers
-                this.fallbackCopyTextToClipboard(copyText);
-            }
-
-            // Hide indicator after 2 seconds
-            setTimeout(() => {
-                if (indicator) {
-                    indicator.style.display = 'none';
-                }
-            }, 2000);
-
-        } catch (error) {
-            console.error('❌ Error copying question:', error);
-            this.showNotification('❌ Failed to copy question');
-        }
-    }
-
-    fallbackCopyTextToClipboard(text) {
-        try {
-            // Create temporary textarea element
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-
-            const successful = document.execCommand('copy');
-            document.body.removeChild(textArea);
-
-            if (successful) {
-                console.log('📋 Copied question content to clipboard (fallback)');
-                this.showNotification('📋 Copied to clipboard!');
-            } else {
-                console.error('❌ Failed to copy with fallback method');
-                this.showNotification('❌ Failed to copy to clipboard');
-            }
-        } catch (err) {
-            console.error('❌ Error in fallback copy:', err);
-            this.showNotification('❌ Failed to copy to clipboard');
-        }
-    }
-
-    formatQuestionForCopy(question) {
-        let text = `Question #${question.id}\n\n`;
-        text += `Question: ${question.main_question}\n\n`;
-
-        if (question.answers && Array.isArray(question.answers)) {
-            text += `Answers:\n`;
-            question.answers.forEach((answer, index) => {
-                const isSelected = answer.startsWith('*');
-                const cleanAnswer = answer.replace('*', '');
-                text += `${index + 1}. ${cleanAnswer}${isSelected ? ' (Selected)' : ''}\n`;
-            });
-        } else if (question.groupradio && Array.isArray(question.groupradio)) {
-            text += `Group Radio Questions:\n`;
-            question.groupradio.forEach((group, groupIndex) => {
-                text += `\n${groupIndex + 1}. ${group.question}\n`;
-                group.answers.forEach((answer, answerIndex) => {
-                    const isSelected = answer.startsWith('*');
-                    const cleanAnswer = answer.replace('*', '');
-                    text += `   ${answerIndex + 1}. ${cleanAnswer}${isSelected ? ' (Selected)' : ''}\n`;
-                });
-            });
-        } else if ((question.dragdropV2 && Array.isArray(question.dragdropV2)) || (question.dragdropv2 && Array.isArray(question.dragdropv2))) {
-            const dragdropV2Data = question.dragdropV2 || question.dragdropv2;
-            const dragdropV2Dict = question.dragdropV2_dictionary || question.dragdropv2_dictionary;
-
-            text += `Drag & Drop V2:\n`;
-            dragdropV2Data.forEach((drop, index) => {
-                text += `\n${index + 1}. ${drop.question}\n`;
-                text += `   Answers: ${drop.answers.join(', ')}\n`;
-            });
-            if (dragdropV2Dict) {
-                text += `\nDictionary: ${dragdropV2Dict.join(', ')}\n`;
-            }
-        } else if (question.dragdrop && Array.isArray(question.dragdrop)) {
-            text += `Drag & Drop:\n`;
-            question.dragdrop.forEach((drop, index) => {
-                text += `\n${index + 1}. ${drop.question}\n`;
-                text += `   Answers: ${drop.answers.join(', ')}\n`;
-            });
-            if (question.dragdrop_dictionary) {
-                text += `\nDictionary: ${question.dragdrop_dictionary.join(', ')}\n`;
-            }
-        } else if ((question.group_input && Array.isArray(question.group_input)) || (question.groupinput && Array.isArray(question.groupinput))) {
-            const groupInputData = question.group_input || question.groupinput;
-            text += `Group Input:\n`;
-            groupInputData.forEach((input, index) => {
-                text += `\n${index + 1}. ${input.question}\n`;
-                if (input.answer) {
-                    text += `   Answer: ${input.answer}\n`;
-                }
-            });
-        }
-
-        return text;
-    }
-
-    renderAnswers(question) {
-        let answersHtml = '';
-
-        if (question.answers && Array.isArray(question.answers)) {
-            answersHtml = `
-                <div class="question-answers">
-                    <div class="answers-title">Answers:</div>
-                    ${question.answers.map(answer => `
-                        <div class="answer-item ${answer.startsWith('*') ? 'selected' : ''}">
-                            ${this.escapeHtml(answer.replace('*', ''))}
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        } else if (question.groupradio && Array.isArray(question.groupradio)) {
-            answersHtml = `
-                <div class="question-answers">
-                    <div class="answers-title">Group Radio Questions:</div>
-                    ${question.groupradio.map(group => `
-                        <div class="answer-item">
-                            <strong>${this.escapeHtml(group.question)}</strong><br>
-                            ${group.answers.map(answer => `
-                                <span class="${answer.startsWith('*') ? 'selected' : ''}">
-                                    ${this.escapeHtml(answer.replace('*', ''))}
-                                </span>
-                            `).join(', ')}
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        } else if ((question.dragdropV2 && Array.isArray(question.dragdropV2)) || (question.dragdropv2 && Array.isArray(question.dragdropv2))) {
-            const dragdropV2Data = question.dragdropV2 || question.dragdropv2;
-            const dragdropV2Dict = question.dragdropV2_dictionary || question.dragdropv2_dictionary;
-
-            answersHtml = `
-                <div class="question-answers">
-                    <div class="answers-title">Drag & Drop V2:</div>
-                    ${dragdropV2Data.map(drop => `
-                        <div class="answer-item">
-                            <strong>${this.escapeHtml(drop.question)}</strong><br>
-                            Answers: ${drop.answers.map(answer => this.escapeHtml(answer)).join(', ')}
-                        </div>
-                    `).join('')}
-                    <div class="answer-item">
-                        <strong>Dictionary:</strong> ${dragdropV2Dict ?
-                    dragdropV2Dict.map(item => this.escapeHtml(item)).join(', ') :
-                    'No dictionary'
-                }
-                    </div>
-                </div>
-            `;
-        } else if (question.dragdrop && Array.isArray(question.dragdrop)) {
-            answersHtml = `
-                <div class="question-answers">
-                    <div class="answers-title">Drag & Drop:</div>
-                    ${question.dragdrop.map(drop => `
-                        <div class="answer-item">
-                            <strong>${this.escapeHtml(drop.question)}</strong><br>
-                            Answers: ${drop.answers.map(answer => this.escapeHtml(answer)).join(', ')}
-                        </div>
-                    `).join('')}
-                    <div class="answer-item">
-                        <strong>Dictionary:</strong> ${question.dragdrop_dictionary ?
-                    question.dragdrop_dictionary.map(item => this.escapeHtml(item)).join(', ') :
-                    'No dictionary'
-                }
-                    </div>
-                </div>
-            `;
-        } else if ((question.group_input && Array.isArray(question.group_input)) || (question.groupinput && Array.isArray(question.groupinput))) {
-            const groupInputData = question.group_input || question.groupinput;
-            answersHtml = `
-                <div class="question-answers">
-                    <div class="answers-title">Group Input:</div>
-                    ${groupInputData.map(input => `
-                        <div class="answer-item">
-                            <strong>${this.escapeHtml(input.question)}</strong><br>
-                            ${input.answer ? `<span class="answer-text">${this.escapeHtml(input.answer)}</span>` : '<span class="no-answer">No answer provided</span>'}
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        return answersHtml;
-    }
-
-    getQuestionTypeLabel(type) {
-        const labels = {
-            'radio': 'RADIO',
-            'checkbox': 'CHECKBOX',
-            'dragdrop': 'DRAGDROP',
-            'dragdropV2': 'DRAGDROP V2',
-            'groupradio': 'GROUP RADIO',
-            'group_input': 'GROUP INPUT',
-            'test': 'TEST'
-        };
-
-        return labels[type] || type.toUpperCase();
-    }
-
-    getTimeAgo(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMs / 3600000);
-        const diffDays = Math.floor(diffMs / 86400000);
-
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins} min ago`;
-        if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    }
-
-    updateQuestionCount() {
-        const totalQuestions = document.getElementById('totalQuestions');
-        totalQuestions.textContent = this.questions.length;
-    }
-
-    updateConnectionStatus() {
-        const realtimeStatus = document.getElementById('realtimeStatus');
-
-        if (this.isConnected) {
-            realtimeStatus.textContent = '✅ CONNECTED';
-            realtimeStatus.className = 'stat-value status-connected';
-        } else {
-            realtimeStatus.textContent = '❌ DISCONNECTED';
-            realtimeStatus.className = 'stat-value status-error';
-        }
-    }
-
-    updateLastUpdated() {
-        const lastUpdated = document.getElementById('lastUpdated');
-        this.lastUpdateTime = new Date();
-        lastUpdated.textContent = this.lastUpdateTime.toLocaleTimeString();
-    }
-
-    setupAutoRefresh() {
-        // Refresh every 30 seconds as backup
-        setInterval(async () => {
-            if (this.isConnected) {
-                await this.loadQuestions();
-            }
-        }, 30000);
-    }
-
-    showLoading(show) {
-        const loading = document.getElementById('loading');
-        const questionsList = document.getElementById('questionsList');
-        const emptyState = document.getElementById('emptyState');
-
-        if (show) {
-            loading.style.display = 'flex';
-            questionsList.style.display = 'none';
-            emptyState.style.display = 'none';
-        } else {
-            loading.style.display = 'none';
-        }
-    }
-
-    showError(message) {
-        console.error('❌ Error:', message);
-        const realtimeStatus = document.getElementById('realtimeStatus');
-        realtimeStatus.textContent = '❌ ERROR';
-        realtimeStatus.className = 'stat-value status-error';
-    }
-
-    showNotification(message) {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #48bb78;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            animation: slideInRight 0.3s ease;
-        `;
-
-        document.body.appendChild(notification);
-
-        // Remove after 3 seconds
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
-    }
-
-    playNotificationSound() {
-        const audio = document.getElementById('notificationSound');
-        if (audio) {
-            audio.play().catch(error => {
-                console.log('🔇 Could not play notification sound:', error);
-            });
-        }
-    }
-
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    setupClearAllFunctionality() {
-        const clearAllBtn = document.getElementById('clearAllBtn');
-        const confirmModal = document.getElementById('confirmModal');
-        const confirmClearBtn = document.getElementById('confirmClearBtn');
-        const cancelClearBtn = document.getElementById('cancelClearBtn');
-
-        // Show modal when clear all button is clicked
-        clearAllBtn.addEventListener('click', () => {
-            confirmModal.style.display = 'flex';
-        });
-
-        // Confirm clear all
-        confirmClearBtn.addEventListener('click', async () => {
-            await this.clearAllQuestions();
-            confirmModal.style.display = 'none';
-        });
-
-        // Cancel clear all
-        cancelClearBtn.addEventListener('click', () => {
-            confirmModal.style.display = 'none';
-        });
-
-        // Close modal when clicking outside
-        confirmModal.addEventListener('click', (e) => {
-            if (e.target === confirmModal) {
-                confirmModal.style.display = 'none';
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && confirmModal.style.display === 'flex') {
-                confirmModal.style.display = 'none';
-            }
-        });
-    }
-
-    async clearAllQuestions() {
-        try {
-            console.log('🗑️ Clearing all questions...');
-
-            // Show loading state
-            this.showNotification('🗑️ Clearing all questions...');
-
-            // Delete all questions from Supabase
-            const { error } = await supabase
-                .from(SUPABASE_CONFIG.TABLE_NAME)
-                .delete()
-                .neq('id', 0); // Delete all records
-
-            if (error) {
-                console.error('❌ Error clearing questions:', error);
-                this.showNotification('❌ Failed to clear questions: ' + error.message);
+            if (!rows.length) {
+                setStatus('Không đọc được dữ liệu. Hỗ trợ: hanzi,pinyin hoặc sheet tiếng Việt (Từ mới, Phiên âm, Ví dụ (chữ hán), Phiên âm, Dịch).');
+                loadBtn.disabled = false;
                 return;
             }
-
-            // Clear local questions array
-            this.questions = [];
-
-            // Update UI
-            this.updateQuestionCount();
-            this.renderQuestions();
-            this.updateLastUpdated();
-
-            // Show success notification
-            this.showNotification('✅ All questions cleared successfully!');
-
-            console.log('✅ All questions cleared successfully');
-
-        } catch (error) {
-            console.error('❌ Error in clearAllQuestions:', error);
-            this.showNotification('❌ Failed to clear questions: ' + error.message);
+            data = rows.filter(r => r.hanzi && r.pinyin);
+            // reset state
+            currentIndex = -1; lastIndex = -1; answered = false; correctCount = 0; questionCount = 0;
+            scoreEl.textContent = 'Đúng: 0/0';
+            nextBtn.classList.remove('hidden');
+            setStatus('Đã tải ' + data.length + ' mục. Bắt đầu làm quiz!');
+            renderQuestion();
+        } catch (err) {
+            console.error(err);
+            setStatus('Lỗi: ' + (err && err.message ? err.message : String(err)));
+        } finally {
+            loadBtn.disabled = false;
         }
     }
-}
 
-// Initialize dashboard when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('📊 LMS Dashboard starting...');
-    window.lmsDashboard = new LMSDashboard();
-});
-
-// Add CSS animation for notification
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
+    async function loadLocal() {
+        try {
+            setStatus('Đang tải CSV nội bộ...');
+            const csvText = await fetchCsv('từ mới 1_3 - Trang tính1 (1).csv');
+            const rows = parseVietnameseCsv(csvText);
+            if (!rows.length) { setStatus('CSV nội bộ không đúng định dạng.'); return; }
+            data = rows.filter(r => r.hanzi && r.pinyin);
+            currentIndex = -1; lastIndex = -1; answered = false; correctCount = 0; questionCount = 0;
+            scoreEl.textContent = 'Đúng: 0/0';
+            nextBtn.classList.add('hidden');
+            setStatus('Đã tải CSV nội bộ (' + data.length + ' mục).');
+            renderQuestion();
+        } catch (e) {
+            console.error(e);
+            setStatus('Không thể tải CSV nội bộ.');
         }
     }
-`;
-document.head.appendChild(style); 
+
+    loadBtn.addEventListener('click', loadData);
+    loadLocalBtn.addEventListener('click', loadLocal);
+    nextBtn.addEventListener('click', nextQuestion);
+    window.addEventListener('keydown', (e) => {
+        // chọn đáp án bằng phím 1-4
+        if (!card.classList.contains('hidden') && !answered) {
+            if (e.key >= '1' && e.key <= '4') {
+                const idx = Number(e.key) - 1;
+                const btn = optionsEl.querySelectorAll('.option')[idx];
+                if (btn) btn.click();
+            }
+        }
+        // sang câu tiếp
+        if (e.key === 'Enter' || e.code === 'Space') {
+            if (!nextBtn.classList.contains('hidden')) nextBtn.click();
+        }
+    });
+
+    // Lưu/khôi phục URL gần nhất từ localStorage cho tiện
+    const KEY = 'quiz_hanzi_csv_url';
+    try { const saved = localStorage.getItem(KEY); if (saved) sheetUrlInput.value = saved; } catch { }
+    sheetUrlInput.addEventListener('change', () => { try { localStorage.setItem(KEY, sheetUrlInput.value.trim()); } catch { } });
+    // Auto load qua ?csv=...
+    try {
+        const params = new URLSearchParams(location.search);
+        const csvParam = params.get('csv');
+        if (csvParam) {
+            sheetUrlInput.value = csvParam;
+            localStorage.setItem(KEY, csvParam);
+            loadData();
+        }
+    } catch { }
+})();
