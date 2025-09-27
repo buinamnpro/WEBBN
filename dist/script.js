@@ -539,5 +539,10 @@ console.log('Script loaded successfully'); // Debug log
         nextSpeakingQuestion();
     };
 
-    console.log('Debug function added: window.testRandomFunction()');
+    // Also expose speaking data for debugging
+    window.speakingData = speakingData;
+    window.speakingIndex = speakingIndex;
+    window.isSpeakingMode = isSpeakingMode;
+
+    console.log('Debug functions added: window.testRandomFunction()');
 })();

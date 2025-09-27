@@ -132,7 +132,18 @@
                 }
             };
 
-            console.log('Test function added: window.testRandom()');
+            // Test speaking next button directly
+            window.testSpeakingNext = function () {
+                console.log('=== TEST SPEAKING NEXT ===');
+                const speakingNextBtn = document.getElementById('speaking-next-btn');
+                console.log('Speaking next button found:', !!speakingNextBtn);
+                if (speakingNextBtn) {
+                    console.log('Clicking speaking next button...');
+                    speakingNextBtn.click();
+                }
+            };
+
+            console.log('Test functions added: window.testRandom() and window.testSpeakingNext()');
         }, 1000);
     </script>
 </body>
