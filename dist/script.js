@@ -337,9 +337,13 @@
 
     function toggleRandomMode() {
         isRandomMode = !isRandomMode;
+        console.log('Random mode toggled:', isRandomMode); // Debug log
         if (randomToggleBtn) {
             randomToggleBtn.classList.toggle('active', isRandomMode);
             randomToggleBtn.textContent = isRandomMode ? '🎲 Random ON' : '🎲 Random';
+            console.log('Button updated:', randomToggleBtn.textContent); // Debug log
+        } else {
+            console.log('Random toggle button not found in toggleRandomMode'); // Debug log
         }
     }
 
@@ -419,7 +423,12 @@
     }
 
     if (randomToggleBtn) {
-        randomToggleBtn.addEventListener('click', toggleRandomMode);
+        randomToggleBtn.addEventListener('click', (e) => {
+            console.log('Random button clicked'); // Debug log
+            toggleRandomMode();
+        });
+    } else {
+        console.log('Random toggle button not found'); // Debug log
     }
 
     // Dataset button listeners
