@@ -330,7 +330,15 @@ console.log('Script loaded successfully'); // Debug log
     function nextSpeakingQuestion() {
         // Use global variable if available, otherwise use local
         const randomMode = window.isRandomMode !== undefined ? window.isRandomMode : isRandomMode;
-        console.log('nextSpeakingQuestion - randomMode:', randomMode);
+        console.log('nextSpeakingQuestion - Environment check:', {
+            hostname: window.location.hostname,
+            isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+            randomMode: randomMode,
+            windowIsRandomMode: window.isRandomMode,
+            localIsRandomMode: isRandomMode,
+            speakingDataLength: speakingData.length,
+            currentSpeakingIndex: speakingIndex
+        });
 
         if (randomMode) {
             // Random speaking question
@@ -339,11 +347,11 @@ console.log('Script loaded successfully'); // Debug log
                 newIndex = Math.floor(Math.random() * speakingData.length);
             } while (newIndex === speakingIndex && speakingData.length > 1);
             speakingIndex = newIndex;
-            console.log('Random question selected:', speakingIndex);
+            console.log('🎲 RANDOM question selected:', speakingIndex, 'of', speakingData.length);
         } else {
             // Sequential speaking question
             speakingIndex = (speakingIndex + 1) % speakingData.length;
-            console.log('Sequential question selected:', speakingIndex);
+            console.log('➡️ SEQUENTIAL question selected:', speakingIndex, 'of', speakingData.length);
         }
         renderSpeakingQuestion();
     }
@@ -385,11 +393,13 @@ console.log('Script loaded successfully'); // Debug log
                 setStatus('Đã tải ' + speakingData.length + ' câu nói từ ' + filePath);
                 renderSpeakingQuestion();
 
-                // Reset random button state
+                // Reset random button state and sync with global variable
                 if (randomToggleBtn) {
                     randomToggleBtn.classList.remove('active');
                     randomToggleBtn.textContent = '🎲 Random';
                 }
+                // Sync global variable
+                window.isRandomMode = false;
 
                 // Debug log
                 console.log('Speaking mode activated:', {
@@ -501,4 +511,33 @@ console.log('Script loaded successfully'); // Debug log
             loadData();
         }
     } catch { }
+
+    // Expose functions for debugging
+    window.testRandomFunction = function () {
+        console.log('=== TEST RANDOM FUNCTION ===');
+        console.log('Environment:', {
+            hostname: window.location.hostname,
+            isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+            protocol: window.location.protocol
+        });
+        console.log('State:', {
+            isSpeakingMode: isSpeakingMode,
+            speakingDataLength: speakingData.length,
+            speakingIndex: speakingIndex,
+            isRandomMode: isRandomMode,
+            windowIsRandomMode: window.isRandomMode
+        });
+
+        if (speakingData.length > 0) {
+            const randomIndex = Math.floor(Math.random() * speakingData.length);
+            console.log('Random test - would select index:', randomIndex);
+            console.log('Random test - question would be:', speakingData[randomIndex]);
+        }
+
+        // Test nextSpeakingQuestion directly
+        console.log('Testing nextSpeakingQuestion...');
+        nextSpeakingQuestion();
+    };
+
+    console.log('Debug function added: window.testRandomFunction()');
 })();
