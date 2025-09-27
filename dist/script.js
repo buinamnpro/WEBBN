@@ -22,6 +22,7 @@
     const speakBtn = document.getElementById('speak-btn');
     const speakingNextBtn = document.getElementById('speaking-next-btn');
     const speakingProgressEl = document.getElementById('speaking-progress');
+    const randomToggleBtn = document.getElementById('random-toggle-btn');
 
     let data = [];              // { hanzi, pinyin, meaningVi, exHanzi, exPinyin, exVi }
     let speakingData = [];      // { hanzi, pinyin } for speaking mode
@@ -33,6 +34,7 @@
     let currentDataset = '';
     let isSpeakingMode = false;
     let speakingIndex = 0;
+    let isRandomMode = false;
 
     function setStatus(msg) { if (statusEl) statusEl.textContent = msg; }
 
@@ -319,8 +321,26 @@
     }
 
     function nextSpeakingQuestion() {
-        speakingIndex = (speakingIndex + 1) % speakingData.length;
+        if (isRandomMode) {
+            // Random speaking question
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * speakingData.length);
+            } while (newIndex === speakingIndex && speakingData.length > 1);
+            speakingIndex = newIndex;
+        } else {
+            // Sequential speaking question
+            speakingIndex = (speakingIndex + 1) % speakingData.length;
+        }
         renderSpeakingQuestion();
+    }
+
+    function toggleRandomMode() {
+        isRandomMode = !isRandomMode;
+        if (randomToggleBtn) {
+            randomToggleBtn.classList.toggle('active', isRandomMode);
+            randomToggleBtn.textContent = isRandomMode ? '🎲 Random ON' : '🎲 Random';
+        }
     }
 
     async function loadDataset(filePath) {
@@ -338,6 +358,7 @@
 
                 isSpeakingMode = true;
                 speakingIndex = 0;
+                isRandomMode = false; // Reset random mode
                 currentDataset = filePath;
 
                 // Hide quiz mode, show speaking mode
@@ -346,6 +367,12 @@
 
                 setStatus('Đã tải ' + speakingData.length + ' câu nói từ ' + filePath);
                 renderSpeakingQuestion();
+
+                // Reset random button state
+                if (randomToggleBtn) {
+                    randomToggleBtn.classList.remove('active');
+                    randomToggleBtn.textContent = '🎲 Random';
+                }
             } else {
                 // Regular CSV quiz mode
                 const csvText = await fetchCsv(filePath);
@@ -389,6 +416,10 @@
 
     if (speakingNextBtn) {
         speakingNextBtn.addEventListener('click', nextSpeakingQuestion);
+    }
+
+    if (randomToggleBtn) {
+        randomToggleBtn.addEventListener('click', toggleRandomMode);
     }
 
     // Dataset button listeners

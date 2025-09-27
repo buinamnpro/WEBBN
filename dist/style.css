@@ -194,6 +194,30 @@ button:disabled { opacity: .6; cursor: not-allowed; }
     transform: translateY(-1px);
 }
 
+.random-toggle-btn {
+    padding: 12px 20px;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    background: #ffc107;
+    color: #212529;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.random-toggle-btn:hover {
+    background: #e0a800;
+    border-color: #d39e00;
+    transform: translateY(-1px);
+}
+
+.random-toggle-btn.active {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
 .speaking-bar {
     display: flex;
     justify-content: space-between;
