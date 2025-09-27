@@ -117,8 +117,11 @@
                         e.stopPropagation();
 
                         // Call nextSpeakingQuestion directly
-                        if (window.testRandomFunction) {
-                            window.testRandomFunction();
+                        if (window.nextSpeakingQuestion) {
+                            console.log('Calling nextSpeakingQuestion directly...');
+                            window.nextSpeakingQuestion();
+                        } else {
+                            console.log('nextSpeakingQuestion not available');
                         }
                         return false;
                     };

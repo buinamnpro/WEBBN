@@ -539,6 +539,9 @@ console.log('Script loaded successfully'); // Debug log
         nextSpeakingQuestion();
     };
 
+    // Also expose nextSpeakingQuestion directly
+    window.nextSpeakingQuestion = nextSpeakingQuestion;
+
     // Also expose speaking data for debugging
     window.speakingData = speakingData;
     window.speakingIndex = speakingIndex;
