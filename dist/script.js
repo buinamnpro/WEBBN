@@ -328,16 +328,22 @@ console.log('Script loaded successfully'); // Debug log
     }
 
     function nextSpeakingQuestion() {
-        if (isRandomMode) {
+        // Use global variable if available, otherwise use local
+        const randomMode = window.isRandomMode !== undefined ? window.isRandomMode : isRandomMode;
+        console.log('nextSpeakingQuestion - randomMode:', randomMode);
+
+        if (randomMode) {
             // Random speaking question
             let newIndex;
             do {
                 newIndex = Math.floor(Math.random() * speakingData.length);
             } while (newIndex === speakingIndex && speakingData.length > 1);
             speakingIndex = newIndex;
+            console.log('Random question selected:', speakingIndex);
         } else {
             // Sequential speaking question
             speakingIndex = (speakingIndex + 1) % speakingData.length;
+            console.log('Sequential question selected:', speakingIndex);
         }
         renderSpeakingQuestion();
     }

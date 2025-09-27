@@ -94,7 +94,11 @@
                     randomBtn.classList.toggle('active', !isActive);
                     randomBtn.textContent = !isActive ? '🎲 Random ON' : '🎲 Random';
 
+                    // Set global variable for script.js
+                    window.isRandomMode = !isActive;
+
                     console.log('Random mode:', !isActive ? 'ON' : 'OFF');
+                    console.log('Global isRandomMode:', window.isRandomMode);
                     return false;
                 };
 
