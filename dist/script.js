@@ -356,6 +356,9 @@ console.log('Script loaded successfully'); // Debug log
         renderSpeakingQuestion();
     }
 
+    // Expose function immediately
+    window.nextSpeakingQuestion = nextSpeakingQuestion;
+
     function toggleRandomMode() {
         isRandomMode = !isRandomMode;
         console.log('Random mode toggled:', isRandomMode); // Debug log
@@ -539,8 +542,6 @@ console.log('Script loaded successfully'); // Debug log
         nextSpeakingQuestion();
     };
 
-    // Also expose nextSpeakingQuestion directly
-    window.nextSpeakingQuestion = nextSpeakingQuestion;
 
     // Also expose speaking data for debugging
     window.speakingData = speakingData;
