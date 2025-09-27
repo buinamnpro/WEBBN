@@ -68,6 +68,40 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Debug script
+        setTimeout(() => {
+            console.log('=== DEBUG SCRIPT ===');
+            const randomBtn = document.getElementById('random-toggle-btn');
+            console.log('Random button found:', !!randomBtn);
+            if (randomBtn) {
+                console.log('Button text:', randomBtn.textContent);
+                console.log('Button styles:', {
+                    background: window.getComputedStyle(randomBtn).background,
+                    cursor: window.getComputedStyle(randomBtn).cursor,
+                    pointerEvents: window.getComputedStyle(randomBtn).pointerEvents,
+                    zIndex: window.getComputedStyle(randomBtn).zIndex
+                });
+
+                // Test click manually
+                randomBtn.onclick = function (e) {
+                    console.log('Manual click handler triggered!');
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Toggle random mode
+                    const isActive = randomBtn.classList.contains('active');
+                    randomBtn.classList.toggle('active', !isActive);
+                    randomBtn.textContent = !isActive ? '🎲 Random ON' : '🎲 Random';
+
+                    console.log('Random mode:', !isActive ? 'ON' : 'OFF');
+                    return false;
+                };
+
+                console.log('Manual click handler added');
+            }
+        }, 1000);
+    </script>
 </body>
 
 </html>

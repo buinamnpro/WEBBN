@@ -204,6 +204,9 @@ button:disabled { opacity: .6; cursor: not-allowed; }
     font-weight: 600 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
+    position: relative !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
 }
 
 .random-toggle-btn:hover {
