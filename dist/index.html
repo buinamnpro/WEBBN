@@ -90,74 +90,7 @@
                     zIndex: window.getComputedStyle(randomBtn).zIndex
                 });
 
-                // Test click manually
-                randomBtn.onclick = function (e) {
-                    console.log('Manual click handler triggered!');
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    // Toggle random mode
-                    const isActive = randomBtn.classList.contains('active');
-                    randomBtn.classList.toggle('active', !isActive);
-                    randomBtn.textContent = !isActive ? '🎲 Random ON' : '🎲 Random';
-
-                    // Set global variable for script.js
-                    window.isRandomMode = !isActive;
-
-                    console.log('Random mode:', !isActive ? 'ON' : 'OFF');
-                    console.log('Global isRandomMode:', window.isRandomMode);
-                    return false;
-                };
-
-                // Also add event listener to speaking next button
-                const speakingNextBtn = document.getElementById('speaking-next-btn');
-                if (speakingNextBtn) {
-                    speakingNextBtn.onclick = function (e) {
-                        console.log('Manual speaking next button clicked!');
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        // Call nextSpeakingQuestion directly
-                        if (window.nextSpeakingQuestion) {
-                            console.log('Calling nextSpeakingQuestion directly...');
-                            window.nextSpeakingQuestion();
-                        } else {
-                            console.log('nextSpeakingQuestion not available, calling manual random logic...');
-
-                            // Manual random logic
-                            if (window.speakingData && window.speakingData.length > 0) {
-                                const randomMode = window.isRandomMode;
-                                console.log('Manual random mode:', randomMode);
-
-                                if (randomMode) {
-                                    // Random speaking question
-                                    let newIndex;
-                                    do {
-                                        newIndex = Math.floor(Math.random() * window.speakingData.length);
-                                    } while (newIndex === window.speakingIndex && window.speakingData.length > 1);
-                                    window.speakingIndex = newIndex;
-                                    console.log('🎲 MANUAL RANDOM question selected:', newIndex, 'of', window.speakingData.length);
-                                } else {
-                                    // Sequential speaking question
-                                    window.speakingIndex = (window.speakingIndex + 1) % window.speakingData.length;
-                                    console.log('➡️ MANUAL SEQUENTIAL question selected:', window.speakingIndex, 'of', window.speakingData.length);
-                                }
-
-                                // Update UI manually
-                                const item = window.speakingData[window.speakingIndex];
-                                const speakingHanziEl = document.getElementById('speaking-hanzi');
-                                const speakingPinyinEl = document.getElementById('speaking-pinyin');
-                                const speakingProgressEl = document.getElementById('speaking-progress');
-
-                                if (speakingHanziEl) speakingHanziEl.textContent = item.hanzi;
-                                if (speakingPinyinEl) speakingPinyinEl.textContent = item.pinyin;
-                                if (speakingProgressEl) speakingProgressEl.textContent = 'Câu: ' + (window.speakingIndex + 1);
-                            }
-                        }
-                        return false;
-                    };
-                    console.log('Manual speaking next button handler added');
-                }
+                // No manual handlers - let random-fix.js handle everything
 
                 console.log('Manual click handler added');
             }

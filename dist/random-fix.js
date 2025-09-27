@@ -7,7 +7,12 @@ let speakingData = [];
 let speakingIndex = 0;
 
 // Function to toggle random mode
-function toggleRandomMode() {
+function toggleRandomMode(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     isRandomMode = !isRandomMode;
     console.log('Random mode toggled:', isRandomMode);
 
@@ -16,6 +21,9 @@ function toggleRandomMode() {
         randomBtn.classList.toggle('active', isRandomMode);
         randomBtn.textContent = isRandomMode ? '🎲 Random ON' : '🎲 Random';
     }
+
+    // Update global variable
+    window.isRandomMode = isRandomMode;
 }
 
 // Function to go to next speaking question
@@ -52,13 +60,18 @@ function nextSpeakingQuestion() {
     if (speakingProgressEl) speakingProgressEl.textContent = 'Câu: ' + (speakingIndex + 1);
 }
 
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM ready, setting up event listeners');
+// Setup event listeners when DOM is ready
+function setupEventListeners() {
+    console.log('Setting up event listeners');
 
     // Random button event listener
     const randomBtn = document.getElementById('random-toggle-btn');
     if (randomBtn) {
+        // Remove any existing event listeners
+        randomBtn.onclick = null;
+        randomBtn.removeEventListener('click', toggleRandomMode);
+
+        // Add our event listener
         randomBtn.addEventListener('click', toggleRandomMode);
         console.log('Random button event listener added');
     } else {
@@ -68,35 +81,38 @@ document.addEventListener('DOMContentLoaded', function () {
     // Speaking next button event listener
     const speakingNextBtn = document.getElementById('speaking-next-btn');
     if (speakingNextBtn) {
+        speakingNextBtn.removeEventListener('click', nextSpeakingQuestion);
         speakingNextBtn.addEventListener('click', nextSpeakingQuestion);
         console.log('Speaking next button event listener added');
     } else {
         console.log('Speaking next button not found');
     }
+}
 
-    // Override speaking data when it's loaded
-    const originalLoadDataset = window.loadDataset;
-    if (originalLoadDataset) {
-        window.loadDataset = function (filePath) {
-            console.log('Overriding loadDataset for:', filePath);
-            const result = originalLoadDataset.apply(this, arguments);
+// Wait for DOM to be ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupEventListeners);
+} else {
+    setupEventListeners();
+}
 
-            // If it's speaking data, capture it
-            if (filePath.includes('onhsk3.txt')) {
-                setTimeout(() => {
-                    // Try to get speaking data from the main script
-                    if (window.speakingData) {
-                        speakingData = window.speakingData;
-                        speakingIndex = window.speakingIndex || 0;
-                        console.log('Captured speaking data:', speakingData.length, 'items');
-                    }
-                }, 100);
-            }
-
-            return result;
-        };
+// Capture speaking data from script.js
+setTimeout(() => {
+    if (window.speakingData && window.speakingData.length > 0) {
+        speakingData = window.speakingData;
+        speakingIndex = window.speakingIndex || 0;
+        console.log('Captured speaking data:', speakingData.length, 'items');
     }
-});
+}, 1000);
+
+// Also try to capture speaking data periodically
+setInterval(() => {
+    if (window.speakingData && window.speakingData.length > 0 && speakingData.length === 0) {
+        speakingData = window.speakingData;
+        speakingIndex = window.speakingIndex || 0;
+        console.log('Periodically captured speaking data:', speakingData.length, 'items');
+    }
+}, 2000);
 
 // Expose functions globally
 window.toggleRandomMode = toggleRandomMode;

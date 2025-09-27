@@ -460,14 +460,7 @@ console.log('Script loaded successfully'); // Debug log
         });
     }
 
-    if (randomToggleBtn) {
-        randomToggleBtn.addEventListener('click', (e) => {
-            console.log('Random button clicked'); // Debug log
-            toggleRandomMode();
-        });
-    } else {
-        console.log('Random toggle button not found'); // Debug log
-    }
+    // Random button event listener removed - handled by random-fix.js
 
     // Dataset button listeners
     const datasetBtns = document.querySelectorAll('.dataset-btn');
