@@ -108,6 +108,23 @@
                     return false;
                 };
 
+                // Also add event listener to speaking next button
+                const speakingNextBtn = document.getElementById('speaking-next-btn');
+                if (speakingNextBtn) {
+                    speakingNextBtn.onclick = function (e) {
+                        console.log('Manual speaking next button clicked!');
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Call nextSpeakingQuestion directly
+                        if (window.testRandomFunction) {
+                            window.testRandomFunction();
+                        }
+                        return false;
+                    };
+                    console.log('Manual speaking next button handler added');
+                }
+
                 console.log('Manual click handler added');
             }
 
