@@ -12,15 +12,26 @@
     <div class="quiz">
         <h1>Quiz Hán tự → Pinyin</h1>
         <div class="row">
-            <input id="sheetUrl" type="url" placeholder="Dán link CSV hoặc để trống để dùng file nội bộ" />
+            <input id="sheetUrl" type="url" placeholder="Dán link CSV hoặc chọn bộ từ bên dưới" />
             <button id="loadBtn">Tải từ link</button>
-            <button id="loadLocalBtn">Tải CSV nội bộ</button>
             <button id="nextBtn" class="hidden">Câu tiếp ▶</button>
+        </div>
+
+        <div class="dataset-section">
+            <h3>Chọn bộ từ:</h3>
+            <div class="dataset-buttons">
+                <button class="dataset-btn" data-file="data/HSK1.csv">HSK 1 (150 từ)</button>
+                <button class="dataset-btn" data-file="data/HSK2.csv">HSK 2 (151 từ)</button>
+                <button class="dataset-btn" data-file="data/HSK3.csv">HSK 3 (296 từ)</button>
+                <button class="dataset-btn" data-file="data/all1-3.csv">Tất cả HSK 1-3 (596 từ)</button>
+                <button class="dataset-btn speaking-btn" data-file="data/onhsk3.txt">HSK 3 Nói (76 câu)</button>
+            </div>
         </div>
         <div class="muted">Mẹo: 1–4 để chọn đáp án; Enter/Space để sang câu tiếp. Trả lời sai được chọn lại.</div>
 
         <div id="status" class="muted" style="margin-top:8px;">Chưa tải dữ liệu.</div>
 
+        <!-- Quiz Mode -->
         <div id="card" class="hidden">
             <div id="hanzi" class="hanzi">字</div>
             <div id="options" class="options"></div>
@@ -33,6 +44,22 @@
                 <div><strong>Ví dụ (chữ Hán):</strong> <span id="exHanzi"></span></div>
                 <div><strong>Phiên âm:</strong> <span id="exPinyin"></span></div>
                 <div><strong>Dịch:</strong> <span id="exVi"></span></div>
+            </div>
+        </div>
+
+        <!-- Speaking Mode -->
+        <div id="speaking-card" class="hidden">
+            <div class="speaking-content">
+                <div id="speaking-hanzi" class="speaking-hanzi">你现在在哪个城市生活？</div>
+                <div id="speaking-pinyin" class="speaking-pinyin">Nǐ xiànzài zài nǎge chéngshì shēnghuó?</div>
+                <div class="speaking-controls">
+                    <button id="speak-btn" class="speak-btn">🔊 Đọc</button>
+                    <button id="speaking-next-btn" class="speaking-next-btn">Câu tiếp ▶</button>
+                </div>
+            </div>
+            <div class="speaking-bar">
+                <div id="speaking-progress" class="muted">Câu: 0</div>
+                <div class="speaking-mode-indicator">📢 Chế độ nói</div>
             </div>
         </div>
     </div>

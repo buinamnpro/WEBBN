@@ -1,0 +1,76 @@
+1.  你现在在哪个城市生活？ Nǐ xiànzài zài nǎge chéngshì shēnghuó? 
+2.  你们城市这几年有什么变化吗？ Nǐmen chéngshì zhè jǐ nián yǒu shén me biànhuà ma? 
+3.  你最近几年有什么变化吗？ Nǐ zuìjìn jǐ nián yǒu shén me biànhuà ma? 
+4.  暑假你想去哪里旅行？ Shǔjià nǐ xiǎng qù nǎlǐ? 
+5.  你们国家现在人口是多少？ Nǐmen guójiā xiànzài rénkǒu shì duōshǎo? 
+6.  世界上哪个国家面积最大？ Shìjiè shàng nǎge guójiā miànjī zuìdà?  
+7.  世界上哪个国家面积最小？ Shìjiè shàng nǎge guójiā miànjī zuìxiǎo? 
+8.  你去过北京了吗？北京跟越南有多少个小时的时差？ Nǐ qùguò Běijīngle ma? Běijīng gēn Yuènán yǒu duōshǎo gè xiǎoshí de shíchā?  
+9.  你觉得你长得像爸爸一样还是像妈妈一样？ Nǐ juéde nǐ zhǎng de xiàng bàba yīyàng háishì xiàng māmā yīyàng? 
+10.  你喜欢现在的自己还是过去的自己？为什么呢？ Nǐ xǐhuān xiànzài de zìjǐ háishì guòqù de zìjǐ? Wèi shénme? 
+11.  你住的地方一年有几个季节？ Nǐ zhù de dìfāng yī nián yǒu jǐ gè jìjié? 
+12.  你最喜欢哪个季节？为什么？ Nǐ zuì xǐhuān nǎge jìjié? Wèishénme? 
+13.  在越南冬天有没有下雪？ Zài Yuènán dōngtiān yǒu méiyǒu xià xuě? 
+14.  如果有一天冬天突然下雪你最想做什么？ Rúguǒ yǒu yītiān dōngtiān tūrán xià xuě nǐ zuì xiǎng zuò shénme? 
+15.  你的家乡在哪里？ Nǐ de jiāxiāng zài nǎlǐ? 
+16.  你家乡有没有有名的风景区？ Nǐ jiāxiāng yǒu méiyǒu yǒumíng de fēngjǐng qū? 
+17.  有人说“在家靠父母，出门靠朋友”，你觉得这句话对不对？为什么？ Yǒurén shuō “zàijiā kào fùmǔ, chūmén kào péngyǒu”, nǐ juéde zhè jù huà duì bùduì? Wèishénme? 
+18.  如果现在你发财，你最想做什么？ Rúguǒ xiànzài nǐ fācái, nǐ zuì xiǎng zuò shénme?  
+19.  你喜欢到山上还是去海边避暑？ Nǐ xǐhuān dào shānshàng háishì qù hǎibiān bìshǔ? 
+20.  你觉得去旅游的时候应该准备什么东西？ Nǐ juéde qù lǚyóu de shíhòu yīnggāi zhǔnbèi shénme dōngxī? 
+21.  你最爱的人是谁？ Nǐ zuì ài de rén shì shéi?  
+22.  你常向家人问好吗？ Nǐ cháng xiàng jiārén wènhǎo ma? 
+23.  妈妈或者爸爸过生日时你想送她什么礼物？ Māmā huòzhě bàba guò shēngrì shí nǐ xiǎng sòng tā shénme lǐwù? 
+24.  你觉得你的工作辛苦吗？你想不想换工作？ Nǐ juéde nǐ de gōngzuò xīnkǔ ma? Nǐ xiǎng bùxiǎng huàn gōngzuò? 
+25.  你去过中国大使馆了吗？ 你知道中国大使馆在哪里吗？ Nǐ qùguò Zhōngguó dàshǐguǎnle ma?  Nǐ zhīdào zhōngguó dàshǐ guǎn zài nǎlǐ ma? 
+26.  骑车或者开车的时候人们应该注意什么呢？ Qí chē huòzhě kāichē de shíhòu rénmen yīnggāi zhùyì shénme ne? 
+27.  你住过院了吗？ 那时候谁照顾你？ Nǐ zhùguò yuànle ma?  Nà shíhòu shéi zhàogù nǐ? 
+28.  你喝过中药吗？觉得怎么样？ Nǐ hēguò zhōngyào ma? Juéde zěnme yàng? 
+29.  你按摩过吗？ Nǐ ànmóguò ma? 
+30.  你针灸过吗？疼吗？ Nǐ zhēnjiǔ guò ma? Téng ma? 
+31.  糖葫芦和烤白薯你喜欢吃哪个？ Tánghúlu hé kǎo báishǔ nǐ xǐhuān chī nǎge?  
+32.  你会弹钢琴吗？ 你想不想学弹钢琴？ Nǐ huì tán gāngqín ma?  Nǐ xiǎng bùxiǎng xué tán gāngqín? 
+33.  你谈过几次恋爱了？ Nǐ tánguò jǐ cì liàn'àile?  
+34.  分手的时候你有什么感觉？ Fēnshǒu de shíhòu nǐ yǒu shénme gǎnjué? 
+35.  你想当导游吗？你觉得导游的工作怎么样？ Nǐ xiǎng dāng dǎoyóu ma? Nǐ juéde dǎoyóu de gōngzuò zěnme yàng? 
+36.  上学的时候你有没有利用假期去打工？ Shàngxué de shíhòu nǐ yǒu méiyǒu lìyòng jiàqī qù dǎgōng? 
+37.  你们公司经常给员工组织去旅游吗？  Nǐmen gōngsī jīngcháng gěi yuángōng zǔzhī qù lǚyóu ma? 
+38.  如果现在公司组织去北京旅游，你会参加吗？为什么？ Rúguǒ xiànzài gōngsī zǔzhī qù Běijīng lǚyóu, nǐ huì cānjiā ma? Wèishénme? 
+39.  你觉得你的老板怎么样？ Nǐ juéde nǐ de lǎobǎn zěnme yàng? 
+40.  你经常帮助别人吗？ 别人经常帮助你吗？  Nǐ jīngcháng bāngzhù biérén ma? Biérén jīngcháng bāngzhù nǐ ma? 
+41.  别人帮助我们的时候我们应该说什么？ Biérén bāngzhù wǒmen de shíhòu wǒmen yīnggāi shuō shénme?  
+42.  你希望将来成为怎么样的人? Nǐ xīwàng jiānglái chéngwéi zěnme yàng de rén? 
+43.  你现在的生活自由吗？有人说结婚以后就没有自由了，请说说你的观点？ Nǐ xiànzài de shēnghuó zìyóu ma? Yǒurén shuō jiéhūn yǐhòu jiù méiyǒu zìyóule, qǐng shuō shuō nǐ de guāndiǎn? 
+44.  你有手提包吗？ Nǐ yǒu shǒutí bāo ma? 
+45.  口袋里你常放什么东西？ Kǒudài lǐ nǐ cháng fàng shénme dōngxī?  
+46.  你是不是丢三落四的人？ Nǐ shì bùshì diūsānlàsì de rén? 
+47.  如果有一天你发现你父母是个很有钱的人你会怎么做？ Rúguǒ yǒu yītiān nǐ fāxiàn nǐ fùmǔ shìgè hěn yǒu qián de rén nǐ huì zěnme zuò? 
+48.  你是不是球迷？你喜欢看足球比赛吗？ Nǐ shì bùshì qiúmí? Nǐ xǐhuān kàn zúqiú bǐsài ma?  
+49.  如果你的老板对你不好，但是他给你的工资比较高，你会不会辞职？为什么？ Rúguǒ nǐ de lǎobǎn duì nǐ bù hǎo, dànshì tā gěi nǐ de gōngzī bǐjiào gāo, nǐ huì bù huì cízhí? Wèishénme? 
+50.  你有没有照相机？ Nǐ yǒu méiyǒu zhàoxiàngjī? 
+51.  你喜欢拍照吗？你常用什么拍照？ Nǐ xǐhuān pāizhào ma? Nǐ chángyòng shénme pāizhào? 
+52.  你有墨镜吗？什么时候你会戴墨镜？ Nǐ yǒu mòjìng ma? Shénme shíhòu nǐ huì dài mòjìng?  
+53.  你最近有没有遇到倒霉的事？ Nǐ zuìjìn yǒu méiyǒu yùdào dǎoméi de shì? 
+54.  为什么人们要遵守交通规则？ Wèishénme rénmen yào zūnshǒu jiāotōng guīzé? 
+55.  你觉得学生学习不好的主要原因是什么？ Nǐ juéde xuéshēng xuéxí bù hǎo de zhǔyào yuányīn shì shénme? 
+56.  你经常去书店吗？你一般去书店买什么东西？ Nǐ jīngcháng qù shūdiàn ma? Nǐ yībān qù shūdiàn mǎi shénme dōngxī? 
+57.  你家有没有书架？ Nǐ jiā yǒu méiyǒu shūjià?  
+58.  你有没有根据鲁迅小说拍成的DVD? Nǐ yǒu méiyǒu gēnjù Lǔxùn xiǎoshuō pāi chéng de DVD? 
+59.  你家附近有没有饭馆？ Nǐ jiā fùjìn yǒu méiyǒu fànguǎn?  
+60.  你常去饭馆吃饭吗？ Nǐ cháng qù fànguǎn chīfàn ma? 
+61.  当服务员对你态度不好的时候，你觉得怎么样？ Dāng fúwùyuán duì nǐ tàidù bù hǎo de shíhòu, nǐ juéde zěnme yàng? 
+62.  在越南一年有几个学期？ Zài Yuènán yī nián yǒu jǐ gè xuéqī? 
+63.  你喜欢看爱情小说吗？为什么？ Nǐ xǐhuān kàn àiqíng xiǎoshuō ma? Wèishénme? 
+64.  你是不是挑食的人？ Nǐ shì bù shì tiāoshí de rén? 
+65.  读完大学你会继续读研究生吗? Dú wán dàxué nǐ huì jìxù dú yánjiūshēng ma?  
+66.  今天你穿什么颜色的衣服？ Jīntiān nǐ chuān shénme yánsè de yīfu?  
+67.  你参加过越南人的婚礼了吗？ Nǐ cānjiā guò Yuènán rén de hūnlǐle ma? 
+68.  新浪一般穿什么衣服？ 新娘一般穿什么衣服？ Xīnláng yībān chuān shénme yīfu? Xīnniáng yībān chuān shénme yīfu? 
+69.    婚礼的气氛怎么样？ Hūnlǐ de qìfēn zěnme yàng? 
+70.  喜糖是什么糖？ Xǐtáng shì shénme táng? 
+71.  喜酒是什么酒？ Xǐjiǔ shì shénme jiǔ? 
+72.  你的汉语是在哪学的？ Nǐ de Hànyǔ shì zài nǎ xué de? 
+73.  你是什么时候开始学汉语的？ Nǐ shì shénme shíhòu kāishǐ xué Hànyǔ de? 
+74.  你学习汉语的原因是什么？ Nǐ xuéxí Hànyǔ de yuányīn shì shénme? 
+75.  你戴过隐形眼镜吗？ Nǐ dàiguò yǐnxíng yǎnjìng ma? 
+76.  在路上，碰到一个很久没见的朋友，你会过来跟他打招呼吗？ Zài lùshàng, pèngdào yīgè hěnjiǔ méi jiàn de péngyǒu, nǐ huì guòlái gēn tā dǎzhāohu ma?

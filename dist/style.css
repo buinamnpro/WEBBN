@@ -67,7 +67,152 @@ button:disabled { opacity: .6; cursor: not-allowed; }
 
 .hidden { display: none; }
 
+.dataset-section {
+    margin: 16px 0;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.dataset-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: #495057;
+}
+
+.dataset-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.dataset-btn {
+    padding: 10px 12px;
+    border: 1px solid #6c757d;
+    border-radius: 6px;
+    background: #fff;
+    color: #495057;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dataset-btn:hover {
+    background: #e9ecef;
+    border-color: #495057;
+}
+
+.dataset-btn:active {
+    background: #dee2e6;
+    transform: translateY(1px);
+}
+
+.speaking-btn {
+    background: #e3f2fd !important;
+    border-color: #2196f3 !important;
+    color: #1976d2 !important;
+}
+
+.speaking-btn:hover {
+    background: #bbdefb !important;
+    border-color: #1976d2 !important;
+}
+
+/* Speaking Mode Styles */
+.speaking-hanzi {
+    font-size: 32px;
+    line-height: 1.4;
+    text-align: center;
+    margin: 24px 0 16px;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.speaking-pinyin {
+    font-size: 20px;
+    line-height: 1.4;
+    text-align: center;
+    margin: 0 0 24px;
+    color: #4a5568;
+    font-style: italic;
+}
+
+.speaking-content {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+    border: 1px solid #e9ecef;
+}
+
+.speaking-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.speak-btn {
+    padding: 12px 20px;
+    border: 1px solid #28a745;
+    border-radius: 8px;
+    background: #28a745;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.speak-btn:hover {
+    background: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-1px);
+}
+
+.speak-btn:active {
+    transform: translateY(0);
+}
+
+.speaking-next-btn {
+    padding: 12px 20px;
+    border: 1px solid #6c757d;
+    border-radius: 8px;
+    background: #6c757d;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.speaking-next-btn:hover {
+    background: #5a6268;
+    border-color: #545b62;
+    transform: translateY(-1px);
+}
+
+.speaking-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.speaking-mode-indicator {
+    font-weight: 600;
+    color: #2196f3;
+    font-size: 14px;
+}
+
 @media (max-width: 520px) {
     .options { grid-template-columns: 1fr; }
     .hanzi { font-size: 72px; }
+    .dataset-buttons { grid-template-columns: 1fr; }
+    .speaking-hanzi { font-size: 24px; }
+    .speaking-pinyin { font-size: 16px; }
+    .speaking-controls { flex-direction: column; }
+    .speak-btn, .speaking-next-btn { width: 100%; }
 }
