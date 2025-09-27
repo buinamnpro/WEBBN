@@ -195,27 +195,27 @@ button:disabled { opacity: .6; cursor: not-allowed; }
 }
 
 .random-toggle-btn {
-    padding: 12px 20px;
-    border: 1px solid #ffc107;
-    border-radius: 8px;
-    background: #ffc107;
-    color: #212529;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 12px 20px !important;
+    border: 1px solid #ffc107 !important;
+    border-radius: 8px !important;
+    background: #ffc107 !important;
+    color: #212529 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
 }
 
 .random-toggle-btn:hover {
-    background: #e0a800;
-    border-color: #d39e00;
-    transform: translateY(-1px);
+    background: #e0a800 !important;
+    border-color: #d39e00 !important;
+    transform: translateY(-1px) !important;
 }
 
 .random-toggle-btn.active {
-    background: #28a745;
-    border-color: #28a745;
-    color: white;
+    background: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
 }
 
 .speaking-bar {

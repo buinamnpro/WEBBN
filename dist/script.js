@@ -1,4 +1,5 @@
 // Quiz logic with dataset selection
+console.log('Script loaded successfully'); // Debug log
 (function () {
     const sheetUrlInput = document.getElementById('sheetUrl');
     const loadBtn = document.getElementById('loadBtn');
@@ -23,6 +24,12 @@
     const speakingNextBtn = document.getElementById('speaking-next-btn');
     const speakingProgressEl = document.getElementById('speaking-progress');
     const randomToggleBtn = document.getElementById('random-toggle-btn');
+
+    console.log('Elements found:', {
+        randomToggleBtn: !!randomToggleBtn,
+        speakingCard: !!speakingCard,
+        speakBtn: !!speakBtn
+    }); // Debug log
 
     let data = [];              // { hanzi, pinyin, meaningVi, exHanzi, exPinyin, exVi }
     let speakingData = [];      // { hanzi, pinyin } for speaking mode
