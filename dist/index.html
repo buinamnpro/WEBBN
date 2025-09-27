@@ -72,6 +72,12 @@
         // Debug script
         setTimeout(() => {
             console.log('=== DEBUG SCRIPT ===');
+            console.log('Environment:', {
+                hostname: window.location.hostname,
+                protocol: window.location.protocol,
+                pathname: window.location.pathname
+            });
+
             const randomBtn = document.getElementById('random-toggle-btn');
             console.log('Random button found:', !!randomBtn);
             if (randomBtn) {
@@ -104,6 +110,29 @@
 
                 console.log('Manual click handler added');
             }
+
+            // Check if script.js loaded properly
+            console.log('Script.js functions available:', {
+                loadDataset: typeof window.loadDataset,
+                nextSpeakingQuestion: typeof window.nextSpeakingQuestion,
+                toggleRandomMode: typeof window.toggleRandomMode
+            });
+
+            // Test random functionality directly
+            window.testRandom = function () {
+                console.log('=== TEST RANDOM FUNCTION ===');
+                console.log('Current speaking data length:', window.speakingData ? window.speakingData.length : 'undefined');
+                console.log('Current speaking index:', window.speakingIndex);
+                console.log('Is random mode:', window.isRandomMode);
+
+                if (window.speakingData && window.speakingData.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * window.speakingData.length);
+                    console.log('Random index would be:', randomIndex);
+                    console.log('Random question would be:', window.speakingData[randomIndex]);
+                }
+            };
+
+            console.log('Test function added: window.testRandom()');
         }, 1000);
     </script>
 </body>

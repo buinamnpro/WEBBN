@@ -390,6 +390,15 @@ console.log('Script loaded successfully'); // Debug log
                     randomToggleBtn.classList.remove('active');
                     randomToggleBtn.textContent = '🎲 Random';
                 }
+
+                // Debug log
+                console.log('Speaking mode activated:', {
+                    isSpeakingMode: isSpeakingMode,
+                    speakingDataLength: speakingData.length,
+                    speakingIndex: speakingIndex,
+                    isRandomMode: isRandomMode,
+                    windowIsRandomMode: window.isRandomMode
+                });
             } else {
                 // Regular CSV quiz mode
                 const csvText = await fetchCsv(filePath);
@@ -432,7 +441,10 @@ console.log('Script loaded successfully'); // Debug log
     }
 
     if (speakingNextBtn) {
-        speakingNextBtn.addEventListener('click', nextSpeakingQuestion);
+        speakingNextBtn.addEventListener('click', () => {
+            console.log('Speaking next button clicked');
+            nextSpeakingQuestion();
+        });
     }
 
     if (randomToggleBtn) {
