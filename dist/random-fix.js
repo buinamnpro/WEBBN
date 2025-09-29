@@ -58,6 +58,26 @@ function nextSpeakingQuestion() {
     if (speakingHanziEl) speakingHanziEl.textContent = item.hanzi;
     if (speakingPinyinEl) speakingPinyinEl.textContent = item.pinyin;
     if (speakingProgressEl) speakingProgressEl.textContent = 'Câu: ' + (speakingIndex + 1);
+
+    // Autoplay continuous: when speaking finishes, auto-advance
+    const autoplayToggle = document.getElementById('autoplayToggle');
+    if (autoplayToggle && autoplayToggle.checked) {
+        const onDone = () => {
+            // Avoid infinite tight loop if no data
+            if (!speakingData || speakingData.length === 0) return;
+            // Defer a tick to allow UI update
+            setTimeout(() => {
+                nextSpeakingQuestion();
+            }, 0);
+        };
+        if (item.vi && window.speakBilingual) {
+            window.speakBilingual(item.vi, item.hanzi, onDone);
+        } else if (window.speakBilingual) {
+            window.speakBilingual('', item.hanzi, onDone);
+        } else if (window.speakText) {
+            window.speakText(item.hanzi);
+        }
+    }
 }
 
 // Setup event listeners when DOM is ready

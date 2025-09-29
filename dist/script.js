@@ -23,6 +23,10 @@ console.log('Script loaded successfully'); // Debug log
     const speakBtn = document.getElementById('speak-btn');
     const speakingNextBtn = document.getElementById('speaking-next-btn');
     const speakingProgressEl = document.getElementById('speaking-progress');
+    const ttsRateInput = document.getElementById('ttsRate');
+    const ttsRateValue = document.getElementById('ttsRateValue');
+    const viZhBtn = document.getElementById('viZhBtn');
+    const autoplayToggle = document.getElementById('autoplayToggle');
     const randomToggleBtn = document.getElementById('random-toggle-btn');
 
     console.log('Elements found:', {
@@ -52,8 +56,35 @@ console.log('Script loaded successfully'); // Debug log
         } catch { return false; }
     }
 
+    function withCacheBust(url) {
+        try {
+            const u = new URL(url, window.location.origin);
+            u.searchParams.set('v', Date.now().toString());
+            return u.toString();
+        } catch {
+            // Fallback for non-URL strings
+            return url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
+        }
+    }
+
+    function resolveDatasetPath(inputPath) {
+        // Keep absolute URLs untouched
+        if (/^https?:\/\//i.test(inputPath)) return inputPath;
+
+        // Normalize incoming path (strip leading slash)
+        const normalized = (inputPath || '').replace(/^\/+/, '');
+
+        // Detect whether app is served under /dist/ or at root
+        const path = window.location.pathname || '/';
+        const underDist = path.includes('/dist/');
+        const base = underDist ? '/dist/' : '/';
+
+        return base + normalized;
+    }
+
     async function fetchCsv(url) {
-        const res = await fetch(url, { cache: 'no-store' });
+        const busted = withCacheBust(url);
+        const res = await fetch(busted, { cache: 'no-store' });
         if (!res.ok) throw new Error('Không thể tải CSV: ' + res.status);
         return await res.text();
     }
@@ -286,6 +317,14 @@ console.log('Script loaded successfully'); // Debug log
         return questions;
     }
 
+    function getSavedRate() {
+        try { return parseFloat(localStorage.getItem('tts_rate')) || 0.8; } catch { return 0.8; }
+    }
+
+    function setSavedRate(rate) {
+        try { localStorage.setItem('tts_rate', String(rate)); } catch { }
+    }
+
     function speakText(text) {
         if ('speechSynthesis' in window) {
             // Stop any current speech
@@ -296,7 +335,7 @@ console.log('Script loaded successfully'); // Debug log
 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'zh-CN';
-            utterance.rate = 0.8;
+            utterance.rate = getSavedRate();
             utterance.pitch = 1;
 
             // Try to use Chinese voice if available
@@ -317,6 +356,110 @@ console.log('Script loaded successfully'); // Debug log
         } else {
             setStatus('Trình duyệt không hỗ trợ text-to-speech');
         }
+    }
+
+    function speakBilingual(viText, zhText, onComplete) {
+        if (!('speechSynthesis' in window)) return;
+        speechSynthesis.cancel();
+        const rate = getSavedRate();
+
+        const speakZh = () => {
+            if (!zhText) return;
+            const zhUtter = new SpeechSynthesisUtterance(zhText);
+            zhUtter.lang = 'zh-CN';
+            zhUtter.rate = rate;
+            try {
+                const voices = speechSynthesis.getVoices();
+                const zhVoice = voices.find(v => v.lang.toLowerCase().startsWith('zh') || v.name.includes('Chinese') || v.name.includes('Mandarin'));
+                if (zhVoice) zhUtter.voice = zhVoice;
+            } catch { }
+            if (typeof onComplete === 'function') {
+                zhUtter.onend = () => {
+                    try { onComplete(); } catch { }
+                };
+            }
+            speechSynthesis.speak(zhUtter);
+        };
+
+        if (viText) {
+            const viUtter = new SpeechSynthesisUtterance(viText);
+            viUtter.lang = 'vi-VN';
+            viUtter.rate = rate;
+            try {
+                const voices = speechSynthesis.getVoices();
+                const viVoice = voices.find(v => v.lang.toLowerCase().startsWith('vi'));
+                if (viVoice) viUtter.voice = viVoice;
+            } catch { }
+            viUtter.onend = () => speakZh();
+            speechSynthesis.speak(viUtter);
+        } else {
+            const zhOnly = new SpeechSynthesisUtterance(zhText);
+            zhOnly.lang = 'zh-CN';
+            zhOnly.rate = rate;
+            try {
+                const voices = speechSynthesis.getVoices();
+                const zhVoice = voices.find(v => v.lang.toLowerCase().startsWith('zh') || v.name.includes('Chinese') || v.name.includes('Mandarin'));
+                if (zhVoice) zhOnly.voice = zhVoice;
+            } catch { }
+            if (typeof onComplete === 'function') {
+                zhOnly.onend = () => { try { onComplete(); } catch { } };
+            }
+            speechSynthesis.speak(zhOnly);
+        }
+    }
+
+    // Initialize TTS rate UI
+    (function initTtsRate() {
+        const rate = getSavedRate();
+        if (ttsRateInput) ttsRateInput.value = String(rate);
+        if (ttsRateValue) ttsRateValue.textContent = rate.toFixed(1) + 'x';
+        if (ttsRateInput) {
+            ttsRateInput.addEventListener('input', () => {
+                const val = parseFloat(ttsRateInput.value);
+                if (!isNaN(val)) {
+                    if (ttsRateValue) ttsRateValue.textContent = val.toFixed(1) + 'x';
+                }
+            });
+            ttsRateInput.addEventListener('change', () => {
+                const val = parseFloat(ttsRateInput.value);
+                if (!isNaN(val)) setSavedRate(val);
+            });
+        }
+    })();
+
+    function parseDichText(text) {
+        // Robust parser: groups of 3 lines (numbered Hanzi, (Pinyin), Vietnamese),
+        // tolerates blank lines and extra spaces.
+        const rawLines = text.split(/\r?\n/);
+        const lines = rawLines.map(l => l.trim()).filter(l => l.length >= 0); // keep empties for stepping
+        const items = [];
+        const nextNonEmpty = (start) => {
+            for (let j = start; j < lines.length; j++) {
+                if (lines[j].trim()) return { idx: j, val: lines[j].trim() };
+            }
+            return { idx: lines.length, val: '' };
+        };
+        for (let i = 0; i < lines.length; i++) {
+            const a = lines[i].trim();
+            if (!a) continue;
+            // Accept: optional BOM, optional spaces, digits, optional dot/ideographic marks, then Hanzi
+            // Handles cases like: "1.", "1、", full-width dot, or even missing punctuation
+            const m1 = a.match(/^\uFEFF?\s*\d+[\.\u3002\uFF0E\u3001\uFF61]?\s*(.+)$/);
+            if (!m1) continue;
+            const hanzi = m1[1].trim();
+            // find pinyin line (skip empties)
+            const b = nextNonEmpty(i + 1); const pinyinLine = b.val;
+            const c = nextNonEmpty(b.idx + 1); const viLine = c.val;
+            // pinyin may be inside parentheses or raw
+            let pinyin = '';
+            const m2 = pinyinLine.match(/^\((.+)\)$/);
+            if (m2) pinyin = m2[1].trim(); else pinyin = pinyinLine;
+            if (hanzi && pinyin && viLine) {
+                items.push({ hanzi, pinyin, vi: viLine });
+                i = c.idx; // advance pointer to after VI line
+            }
+        }
+        return items;
     }
 
     function renderSpeakingQuestion() {
@@ -375,8 +518,8 @@ console.log('Script loaded successfully'); // Debug log
         try {
             setStatus('Đang tải dữ liệu...');
 
-            // Check if it's the speaking file
-            if (filePath.includes('onhsk3.txt')) {
+            // Speaking: onhsk3
+            if (filePath.toLowerCase().endsWith('onhsk3.txt')) {
                 const text = await fetchCsv(filePath);
                 speakingData = parseSpeakingText(text);
                 if (!speakingData.length) {
@@ -412,12 +555,47 @@ console.log('Script loaded successfully'); // Debug log
                     isRandomMode: isRandomMode,
                     windowIsRandomMode: window.isRandomMode
                 });
+                // Hide VI→ZH button in HSK3 Nói mode
+                if (viZhBtn) viZhBtn.classList.add('hidden');
+                // Speaking: dich.txt (VI->ZH)
+            } else if (filePath.toLowerCase().endsWith('dich.txt')) {
+                const text = await fetchCsv(filePath);
+                const triads = parseDichText(text);
+                if (!triads.length) {
+                    setStatus('Không thể parse file dich.txt');
+                    return;
+                }
+
+                speakingData = triads.map(t => ({ hanzi: t.hanzi, pinyin: t.pinyin, vi: t.vi }));
+                isSpeakingMode = true;
+                speakingIndex = 0;
+                currentDataset = filePath;
+                if (card) card.classList.add('hidden');
+                if (speakingCard) speakingCard.classList.remove('hidden');
+                setStatus('Đã tải ' + speakingData.length + ' câu VI→ZH');
+                renderSpeakingQuestion();
+
+                // Show VI→ZH button in Đọc dịch mode and make it start continuous autoplay
+                if (viZhBtn) {
+                    viZhBtn.classList.remove('hidden');
+                    viZhBtn.onclick = () => {
+                        const autoplayToggle = document.getElementById('autoplayToggle');
+                        if (autoplayToggle && !autoplayToggle.checked) {
+                            autoplayToggle.checked = true;
+                        }
+                        // Kick off the chain
+                        if (typeof window.nextSpeakingQuestion === 'function') {
+                            window.nextSpeakingQuestion();
+                        }
+                    };
+                }
+
             } else {
                 // Regular CSV quiz mode
                 const csvText = await fetchCsv(filePath);
                 const rows = parseVietnameseCsv(csvText);
                 if (!rows.length) {
-                    setStatus('CSV không đúng định dạng: ' + filePath);
+                    setStatus('Không đọc được dữ liệu: ' + filePath);
                     return;
                 }
 
@@ -448,7 +626,13 @@ console.log('Script loaded successfully'); // Debug log
     if (speakBtn) {
         speakBtn.addEventListener('click', () => {
             if (speakingData.length && speakingData[speakingIndex]) {
-                speakText(speakingData[speakingIndex].hanzi);
+                const item = speakingData[speakingIndex];
+                if (item.vi) {
+                    // Fire-and-forget to avoid await requirement
+                    speakBilingual(item.vi, item.hanzi);
+                } else {
+                    speakText(item.hanzi);
+                }
             }
         });
     }
@@ -466,7 +650,8 @@ console.log('Script loaded successfully'); // Debug log
     const datasetBtns = document.querySelectorAll('.dataset-btn');
     datasetBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            const filePath = btn.dataset.file;
+            const rawPath = btn.dataset.file || '';
+            const filePath = resolveDatasetPath(rawPath);
             loadDataset(filePath);
         });
     });

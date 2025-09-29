@@ -27,6 +27,7 @@
                 <button class="dataset-btn" data-file="data/HSK3.csv">HSK 3 (296 từ)</button>
                 <button class="dataset-btn" data-file="data/all1-3.csv">Tất cả HSK 1-3 (596 từ)</button>
                 <button class="dataset-btn speaking-btn" data-file="data/onhsk3.txt">HSK 3 Nói (76 câu)</button>
+                <button class="dataset-btn speaking-btn" data-file="data/dich.txt">VI→ZH (Đọc dịch)</button>
             </div>
         </div>
         <div class="muted">Mẹo: 1–4 để chọn đáp án; Enter/Space để sang câu tiếp. Trả lời sai được chọn lại.</div>
@@ -58,6 +59,15 @@
                     <button id="speak-btn" class="speak-btn">🔊 Đọc</button>
                     <button id="speaking-next-btn" class="speaking-next-btn">Câu tiếp ▶</button>
                     <button id="random-toggle-btn" class="random-toggle-btn">🎲 Random</button>
+                    <label class="tts-rate" style="display:flex;align-items:center;gap:6px;">
+                        <span class="muted">Tốc độ:</span>
+                        <input id="ttsRate" type="range" min="0.5" max="1.5" step="0.1" value="0.8" />
+                        <span id="ttsRateValue" class="muted">0.8x</span>
+                    </label>
+                    <button id="viZhBtn" class="speak-btn">▶ VI→ZH</button>
+                    <label class="muted" style="display:flex;align-items:center;gap:6px;">
+                        <input id="autoplayToggle" type="checkbox" /> Tự động phát
+                    </label>
                 </div>
             </div>
             <div class="speaking-bar">
@@ -67,8 +77,8 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
-    <script src="random-fix.js"></script>
+    <script src="script.js?v=tts2"></script>
+    <script src="random-fix.js?v=tts2"></script>
     <script>
         // Debug script
         setTimeout(() => {

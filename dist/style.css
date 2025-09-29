@@ -154,6 +154,10 @@ button:disabled { opacity: .6; cursor: not-allowed; }
     flex-wrap: wrap;
 }
 
+.tts-rate input[type="range"] {
+    width: 160px;
+}
+
 .speak-btn {
     padding: 12px 20px;
     border: 1px solid #28a745;
