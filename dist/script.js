@@ -1,8 +1,7 @@
 // Quiz logic with dataset selection
 console.log('Script loaded successfully'); // Debug log
 (function () {
-    const sheetUrlInput = document.getElementById('sheetUrl');
-    const loadBtn = document.getElementById('loadBtn');
+    // Removed CSV input functionality
     const nextBtn = document.getElementById('nextBtn');
     const statusEl = document.getElementById('status');
     const card = document.getElementById('card');
@@ -49,12 +48,7 @@ console.log('Script loaded successfully'); // Debug log
 
     function setStatus(msg) { if (statusEl) statusEl.textContent = msg; }
 
-    function isLikelyCsvUrl(url) {
-        try {
-            const u = new URL(url);
-            return u.searchParams.get('output') === 'csv' || u.pathname.endsWith('.csv');
-        } catch { return false; }
-    }
+    // Removed CSV URL validation function
 
     function withCacheBust(url) {
         try {
@@ -177,7 +171,10 @@ console.log('Script loaded successfully'); // Debug log
         if (currentIndex < 0) return;
         answered = false;
         const item = data[currentIndex];
-        if (hanziEl) hanziEl.textContent = item.hanzi;
+        if (hanziEl) {
+            hanziEl.textContent = item.hanzi;
+            hanziEl.setAttribute('aria-label', `Chữ Hán: ${item.hanzi}`);
+        }
         if (exampleBox) exampleBox.classList.add('hidden');
         if (exMeaningEl) exMeaningEl.textContent = '';
         if (exHanziEl) exHanziEl.textContent = '';
@@ -197,6 +194,8 @@ console.log('Script loaded successfully'); // Debug log
             btn.className = 'option';
             btn.textContent = options[i];
             btn.dataset.value = options[i];
+            btn.setAttribute('aria-label', `Lựa chọn ${i + 1}: ${options[i]}`);
+            btn.setAttribute('tabindex', '0');
             btn.addEventListener('click', () => handleAnswer(btn, item));
             optionsEl.appendChild(btn);
         }
@@ -205,84 +204,71 @@ console.log('Script loaded successfully'); // Debug log
         setStatus('Chọn pinyin đúng cho chữ: ' + item.hanzi);
         if (nextBtn) nextBtn.classList.remove('hidden');
         if (card) card.classList.remove('hidden');
+
+        // Focus management for accessibility
+        setTimeout(() => {
+            const firstOption = optionsEl.querySelector('.option');
+            if (firstOption) firstOption.focus();
+        }, 100);
     }
 
     function handleAnswer(buttonEl, item) {
         if (answered) return;
         const chosen = buttonEl.dataset.value;
         const isCorrect = chosen === item.pinyin;
-        if (!isCorrect) {
-            buttonEl.classList.add('wrong');
-            buttonEl.disabled = true;
-            return;
-        }
 
-        answered = true;
-        const all = optionsEl.querySelectorAll('.option');
-        all.forEach(b => {
-            b.disabled = true;
-            if (b.dataset.value === item.pinyin) b.classList.add('correct');
-        });
+        // Add visual feedback immediately
+        buttonEl.classList.add('loading');
 
-        questionCount += 1;
-        correctCount += 1;
-        if (scoreEl) scoreEl.textContent = 'Đúng: ' + correctCount + '/' + questionCount;
-        lastIndex = currentIndex;
+        setTimeout(() => {
+            buttonEl.classList.remove('loading');
 
-        if (exMeaningEl) exMeaningEl.textContent = item.meaningVi || '—';
-        if (exHanziEl) exHanziEl.textContent = item.exHanzi || '—';
-        if (exPinyinEl) exPinyinEl.textContent = item.exPinyin || '—';
-        if (exViEl) exViEl.textContent = item.exVi || '—';
-        if (exampleBox) exampleBox.classList.remove('hidden');
+            if (!isCorrect) {
+                // Click đáp án sai - chỉ hiện đáp án sai
+                buttonEl.classList.add('wrong');
+                buttonEl.disabled = true;
+                buttonEl.setAttribute('aria-label', buttonEl.getAttribute('aria-label') + ' - Sai');
+                setStatus(`Sai! Hãy thử lại. Đáp án đúng là: ${item.pinyin}`);
+                console.log('Click đáp án sai - chỉ đáp án này chuyển màu đỏ');
+                return;
+            }
 
-        if (nextBtn) nextBtn.classList.remove('hidden');
+            // Click đáp án đúng - chỉ đáp án đúng chuyển màu xanh
+            answered = true;
+            console.log('Click đáp án đúng - chỉ đáp án đúng chuyển màu xanh');
+            const all = optionsEl.querySelectorAll('.option');
+            all.forEach(b => {
+                b.disabled = true;
+                if (b.dataset.value === item.pinyin) {
+                    b.classList.add('correct');
+                    b.setAttribute('aria-label', b.getAttribute('aria-label') + ' - Đúng');
+                }
+                // Không set màu đỏ cho các đáp án sai chưa được click
+            });
+
+            questionCount += 1;
+            correctCount += 1;
+            if (scoreEl) scoreEl.textContent = 'Đúng: ' + correctCount + '/' + questionCount;
+            lastIndex = currentIndex;
+
+            if (exMeaningEl) exMeaningEl.textContent = item.meaningVi || '—';
+            if (exHanziEl) exHanziEl.textContent = item.exHanzi || '—';
+            if (exPinyinEl) exPinyinEl.textContent = item.exPinyin || '—';
+            if (exViEl) exViEl.textContent = item.exVi || '—';
+            if (exampleBox) exampleBox.classList.remove('hidden');
+
+            if (nextBtn) {
+                nextBtn.classList.remove('hidden');
+                nextBtn.focus(); // Focus next button for accessibility
+            }
+
+            setStatus(`Chính xác! Điểm: ${correctCount}/${questionCount}`);
+        }, 300);
     }
 
     function nextQuestion() { renderQuestion(); }
 
-    async function loadData() {
-        const url = sheetUrlInput.value.trim();
-        if (!url) { setStatus('Không có link. Hãy chọn bộ từ bên dưới hoặc dán link.'); return; }
-        if (!isLikelyCsvUrl(url)) { setStatus('Link chưa đúng định dạng CSV (hãy Publish to the web và chọn CSV).'); }
-        setStatus('Đang tải dữ liệu...');
-        loadBtn.disabled = true;
-        try {
-            const csvText = await fetchCsv(url);
-            let rows = parseVietnameseCsv(csvText);
-            if (!rows.length) {
-                rows = [];
-                const simple = csvParse(csvText);
-                if (simple.length > 1) {
-                    const header = simple.shift().map(h => String(h).trim().toLowerCase());
-                    const idxHanzi = header.indexOf('hanzi');
-                    const idxPinyin = header.indexOf('pinyin');
-                    const idxMeaning = header.indexOf('meaning');
-                    for (const r of simple) {
-                        const hanzi = (r[idxHanzi] || '').trim();
-                        const pinyin = (r[idxPinyin] || '').trim();
-                        const meaningVi = idxMeaning >= 0 ? (r[idxMeaning] || '').trim() : '';
-                        if (hanzi) rows.push({ hanzi, pinyin, meaningVi, exHanzi: '', exPinyin: '', exVi: '' });
-                    }
-                }
-            }
-            if (!rows.length) {
-                setStatus('Không đọc được dữ liệu. Hỗ trợ: hanzi,pinyin hoặc sheet tiếng Việt (Từ mới, Phiên âm, Ví dụ (chữ hán), Phiên âm, Dịch).');
-                loadBtn.disabled = false;
-                return;
-            }
-            data = rows.filter(r => r.hanzi && r.pinyin);
-            currentIndex = -1; lastIndex = -1; answered = false; correctCount = 0; questionCount = 0;
-            if (scoreEl) scoreEl.textContent = 'Đúng: 0/0';
-            if (nextBtn) nextBtn.classList.remove('hidden');
-            setStatus('Đã tải ' + data.length + ' mục từ link. Bắt đầu làm quiz!');
-            renderQuestion();
-        } catch (err) {
-            console.error(err);
-            setStatus('Lỗi: ' + (err && err.message ? err.message : String(err)));
-        } finally {
-            loadBtn.disabled = false;
-        }
-    }
+    // Removed loadData function for CSV input
 
     function parseSpeakingText(text) {
         const lines = text.split('\n').filter(line => line.trim());
@@ -465,9 +451,20 @@ console.log('Script loaded successfully'); // Debug log
     function renderSpeakingQuestion() {
         if (!speakingData.length) return;
         const item = speakingData[speakingIndex];
-        if (speakingHanziEl) speakingHanziEl.textContent = item.hanzi;
-        if (speakingPinyinEl) speakingPinyinEl.textContent = item.pinyin;
+        if (speakingHanziEl) {
+            speakingHanziEl.textContent = item.hanzi;
+            speakingHanziEl.setAttribute('aria-label', `Câu tiếng Trung: ${item.hanzi}`);
+        }
+        if (speakingPinyinEl) {
+            speakingPinyinEl.textContent = item.pinyin;
+            speakingPinyinEl.setAttribute('aria-label', `Phiên âm: ${item.pinyin}`);
+        }
         if (speakingProgressEl) speakingProgressEl.textContent = 'Câu: ' + (speakingIndex + 1);
+
+        // Focus management for accessibility
+        setTimeout(() => {
+            if (speakBtn) speakBtn.focus();
+        }, 100);
     }
 
     function nextSpeakingQuestion() {
@@ -497,6 +494,13 @@ console.log('Script loaded successfully'); // Debug log
             console.log('➡️ SEQUENTIAL question selected:', speakingIndex, 'of', speakingData.length);
         }
         renderSpeakingQuestion();
+
+        // Auto-speak if autoplay is enabled
+        if (autoplayToggle && autoplayToggle.checked) {
+            setTimeout(() => {
+                if (speakBtn) speakBtn.click();
+            }, 300); // Small delay to ensure UI is updated
+        }
     }
 
     // Expose function immediately
@@ -518,6 +522,13 @@ console.log('Script loaded successfully'); // Debug log
         try {
             setStatus('Đang tải dữ liệu...');
 
+            // Add loading state to all dataset buttons
+            const datasetBtns = document.querySelectorAll('.dataset-btn');
+            datasetBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('loading');
+            });
+
             // Speaking: onhsk3
             if (filePath.toLowerCase().endsWith('onhsk3.txt')) {
                 const text = await fetchCsv(filePath);
@@ -536,8 +547,24 @@ console.log('Script loaded successfully'); // Debug log
                 if (card) card.classList.add('hidden');
                 if (speakingCard) speakingCard.classList.remove('hidden');
 
+                // Update tips
+                const quizTips = document.getElementById('quiz-tips');
+                const speakingTips = document.getElementById('speaking-tips');
+                if (quizTips) quizTips.classList.add('hidden');
+                if (speakingTips) speakingTips.classList.remove('hidden');
+
+                // Stop autoplay when switching modes
+                stopAutoplay();
+
                 setStatus('Đã tải ' + speakingData.length + ' câu nói từ ' + filePath);
                 renderSpeakingQuestion();
+
+                // Auto-speak first question if autoplay is enabled
+                if (autoplayToggle && autoplayToggle.checked) {
+                    setTimeout(() => {
+                        if (speakBtn) speakBtn.click();
+                    }, 500);
+                }
 
                 // Reset random button state and sync with global variable
                 if (randomToggleBtn) {
@@ -575,6 +602,13 @@ console.log('Script loaded successfully'); // Debug log
                 setStatus('Đã tải ' + speakingData.length + ' câu VI→ZH');
                 renderSpeakingQuestion();
 
+                // Auto-speak first question if autoplay is enabled
+                if (autoplayToggle && autoplayToggle.checked) {
+                    setTimeout(() => {
+                        if (speakBtn) speakBtn.click();
+                    }, 500);
+                }
+
                 // Show VI→ZH button in Đọc dịch mode and make it start continuous autoplay
                 if (viZhBtn) {
                     viZhBtn.classList.remove('hidden');
@@ -609,17 +643,32 @@ console.log('Script loaded successfully'); // Debug log
                 if (speakingCard) speakingCard.classList.add('hidden');
                 if (card) card.classList.remove('hidden');
 
+                // Update tips
+                const quizTips = document.getElementById('quiz-tips');
+                const speakingTips = document.getElementById('speaking-tips');
+                if (quizTips) quizTips.classList.remove('hidden');
+                if (speakingTips) speakingTips.classList.add('hidden');
+
+                // Stop autoplay when switching to quiz mode
+                stopAutoplay();
+
                 setStatus('Đã tải ' + data.length + ' mục từ ' + filePath);
                 renderQuestion();
             }
         } catch (e) {
             console.error(e);
             setStatus('Không thể tải: ' + filePath);
+        } finally {
+            // Remove loading state from all dataset buttons
+            const datasetBtns = document.querySelectorAll('.dataset-btn');
+            datasetBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('loading');
+            });
         }
     }
 
     // Event listeners
-    if (loadBtn) loadBtn.addEventListener('click', loadData);
     if (nextBtn) nextBtn.addEventListener('click', nextQuestion);
 
     // Speaking mode event listeners
@@ -646,6 +695,29 @@ console.log('Script loaded successfully'); // Debug log
 
     // Random button event listener removed - handled by random-fix.js
 
+    // Autoplay functionality
+    if (autoplayToggle) {
+        autoplayToggle.addEventListener('change', () => {
+            if (autoplayToggle.checked && isSpeakingMode) {
+                // Start autoplay
+                startAutoplay();
+            } else {
+                // Stop autoplay
+                stopAutoplay();
+            }
+        });
+    }
+
+    let autoplayInterval = null;
+
+    function startAutoplay() {
+        console.log('Autoplay enabled - will auto-speak when moving to next question');
+    }
+
+    function stopAutoplay() {
+        console.log('Autoplay disabled - manual speak required');
+    }
+
     // Dataset button listeners
     const datasetBtns = document.querySelectorAll('.dataset-btn');
     datasetBtns.forEach(btn => {
@@ -657,13 +729,24 @@ console.log('Script loaded successfully'); // Debug log
     });
 
     window.addEventListener('keydown', (e) => {
+        // Prevent default for our custom shortcuts
+        if (e.key >= '1' && e.key <= '4' && !card.classList.contains('hidden') && !answered) {
+            e.preventDefault();
+        }
+
         if (isSpeakingMode) {
             // Speaking mode keyboard shortcuts
             if (e.key === 'Enter' || e.code === 'Space') {
+                e.preventDefault();
                 if (speakingNextBtn) speakingNextBtn.click();
             }
             if (e.key === 's' || e.key === 'S') {
+                e.preventDefault();
                 if (speakBtn) speakBtn.click();
+            }
+            if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                if (randomToggleBtn) randomToggleBtn.click();
             }
         } else {
             // Quiz mode keyboard shortcuts
@@ -675,23 +758,21 @@ console.log('Script loaded successfully'); // Debug log
                 }
             }
             if (e.key === 'Enter' || e.code === 'Space') {
+                e.preventDefault();
                 if (!nextBtn.classList.contains('hidden')) nextBtn.click();
             }
         }
+
+        // Global shortcuts
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            // Reset focus to main content
+            const mainContent = document.querySelector('main');
+            if (mainContent) mainContent.focus();
+        }
     });
 
-    const KEY = 'quiz_hanzi_csv_url';
-    try { const saved = localStorage.getItem(KEY); if (saved && sheetUrlInput) sheetUrlInput.value = saved; } catch { }
-    if (sheetUrlInput) sheetUrlInput.addEventListener('change', () => { try { localStorage.setItem(KEY, sheetUrlInput.value.trim()); } catch { } });
-    try {
-        const params = new URLSearchParams(location.search);
-        const csvParam = params.get('csv');
-        if (csvParam && sheetUrlInput) {
-            sheetUrlInput.value = csvParam;
-            localStorage.setItem(KEY, csvParam);
-            loadData();
-        }
-    } catch { }
+    // Removed CSV URL localStorage and URL parameter handling
 
     // Expose functions for debugging
     window.testRandomFunction = function () {

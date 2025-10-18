@@ -4,77 +4,109 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quiz Hán tự - Pinyin</title>
+    <title>Quiz Hán tự - Pinyin | Học tiếng Trung hiệu quả</title>
+    <meta name="description"
+        content="Ứng dụng học tiếng Trung với quiz Hán tự - Pinyin và luyện nói. Hỗ trợ HSK 1-3 và chế độ luyện nói.">
+    <meta name="keywords" content="học tiếng trung, hán tự, pinyin, HSK, quiz, luyện nói">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>中</text></svg>">
 </head>
 
 <body>
     <div class="quiz">
-        <h1>Quiz Hán tự → Pinyin
-            Tác giả: Bùi Giang Nam
-        </h1>
-        <div class="row">
-            <input id="sheetUrl" type="url" placeholder="Dán link CSV hoặc chọn bộ từ bên dưới" />
-            <button id="loadBtn">Tải từ link</button>
-            <button id="nextBtn" class="hidden">Câu tiếp ▶</button>
-        </div>
+        <header>
+            <h1>Quiz Hán tự → Pinyin</h1>
+            <p class="author">Tác giả: Bùi Giang Nam</p>
+        </header>
 
-        <div class="dataset-section">
-            <h3>Chọn bộ từ:</h3>
-            <div class="dataset-buttons">
-                <button class="dataset-btn" data-file="data/HSK1.csv">HSK 1 (150 từ)</button>
-                <button class="dataset-btn" data-file="data/HSK2.csv">HSK 2 (151 từ)</button>
-                <button class="dataset-btn" data-file="data/HSK3.csv">HSK 3 (296 từ)</button>
-                <button class="dataset-btn" data-file="data/all1-3.csv">Tất cả HSK 1-3 (596 từ)</button>
-                <button class="dataset-btn speaking-btn" data-file="data/onhsk3.txt">HSK 3 Nói (76 câu)</button>
-                <button class="dataset-btn speaking-btn" data-file="data/dich.txt">VI→ZH (Đọc dịch)</button>
-            </div>
-        </div>
-        <div class="muted">Mẹo: 1–4 để chọn đáp án; Enter/Space để sang câu tiếp. Trả lời sai được chọn lại.</div>
-
-        <div id="status" class="muted" style="margin-top:8px;">Chưa tải dữ liệu.</div>
-
-        <!-- Quiz Mode -->
-        <div id="card" class="hidden">
-            <div id="hanzi" class="hanzi">字</div>
-            <div id="options" class="options"></div>
-            <div class="bar">
-                <div id="progress" class="muted">Câu: 0</div>
-                <div id="score" class="score">Đúng: 0</div>
-            </div>
-            <div id="example" class="muted hidden" style="margin-top:12px; line-height:1.6;">
-                <div><strong>Nghĩa (VI):</strong> <span id="exMeaning"></span></div>
-                <div><strong>Ví dụ (chữ Hán):</strong> <span id="exHanzi"></span></div>
-                <div><strong>Phiên âm:</strong> <span id="exPinyin"></span></div>
-                <div><strong>Dịch:</strong> <span id="exVi"></span></div>
-            </div>
-        </div>
-
-        <!-- Speaking Mode -->
-        <div id="speaking-card" class="hidden">
-            <div class="speaking-content">
-                <div id="speaking-hanzi" class="speaking-hanzi">你现在在哪个城市生活？</div>
-                <div id="speaking-pinyin" class="speaking-pinyin">Nǐ xiànzài zài nǎge chéngshì shēnghuó?</div>
-                <div class="speaking-controls">
-                    <button id="speak-btn" class="speak-btn">🔊 Đọc</button>
-                    <button id="speaking-next-btn" class="speaking-next-btn">Câu tiếp ▶</button>
-                    <button id="random-toggle-btn" class="random-toggle-btn">🎲 Random</button>
-                    <label class="tts-rate" style="display:flex;align-items:center;gap:6px;">
-                        <span class="muted">Tốc độ:</span>
-                        <input id="ttsRate" type="range" min="0.5" max="1.5" step="0.1" value="0.8" />
-                        <span id="ttsRateValue" class="muted">0.8x</span>
-                    </label>
-                    <button id="viZhBtn" class="speak-btn">▶ VI→ZH</button>
-                    <label class="muted" style="display:flex;align-items:center;gap:6px;">
-                        <input id="autoplayToggle" type="checkbox" /> Tự động phát
-                    </label>
+        <main>
+            <section class="dataset-section" aria-labelledby="dataset-heading">
+                <h3 id="dataset-heading">Chọn bộ từ:</h3>
+                <div class="dataset-buttons" role="group" aria-label="Chọn bộ từ vựng">
+                    <button class="dataset-btn" data-file="data/HSK1.csv" aria-label="Tải bộ từ HSK 1 với 150 từ">HSK 1
+                        (150 từ)</button>
+                    <button class="dataset-btn" data-file="data/HSK2.csv" aria-label="Tải bộ từ HSK 2 với 151 từ">HSK 2
+                        (151 từ)</button>
+                    <button class="dataset-btn" data-file="data/HSK3.csv" aria-label="Tải bộ từ HSK 3 với 296 từ">HSK 3
+                        (296 từ)</button>
+                    <button class="dataset-btn" data-file="data/all1-3.csv"
+                        aria-label="Tải tất cả từ HSK 1-3 với 596 từ">Tất cả HSK 1-3 (596 từ)</button>
+                    <button class="dataset-btn speaking-btn" data-file="data/onhsk3.txt"
+                        aria-label="Chế độ luyện nói HSK 3 với 76 câu">HSK 3 Nói (76 câu)</button>
+                    <button class="dataset-btn speaking-btn" data-file="data/dich.txt"
+                        aria-label="Chế độ đọc dịch Việt-Trung">VI→ZH (Đọc dịch)</button>
                 </div>
+            </section>
+
+            <div class="tips muted" role="note" aria-label="Hướng dẫn sử dụng">
+                <strong>Mẹo:</strong>
+                <span id="quiz-tips">1–4 để chọn đáp án; Enter/Space để sang câu tiếp. Trả lời sai được chọn lại.</span>
+                <span id="speaking-tips" class="hidden">S để đọc; Enter/Space để sang câu tiếp; R để bật/tắt random; Esc
+                    để reset focus.</span>
             </div>
-            <div class="speaking-bar">
-                <div id="speaking-progress" class="muted">Câu: 0</div>
-                <div class="speaking-mode-indicator">📢 Chế độ nói</div>
-            </div>
-        </div>
+
+            <div id="status" class="status muted" role="status" aria-live="polite">Chọn một bộ từ để bắt đầu học.</div>
+
+            <!-- Quiz Mode -->
+            <section id="card" class="quiz-card hidden" aria-labelledby="quiz-heading">
+                <h2 id="quiz-heading" class="sr-only">Chế độ Quiz</h2>
+                <div id="hanzi" class="hanzi" role="img" aria-label="Chữ Hán cần đọc">字</div>
+                <div id="options" class="options" role="radiogroup" aria-label="Các lựa chọn pinyin"></div>
+                <div id="example" class="example muted hidden" role="region" aria-label="Thông tin chi tiết">
+                    <div><strong>Nghĩa (VI):</strong> <span id="exMeaning"></span></div>
+                    <div><strong>Ví dụ (chữ Hán):</strong> <span id="exHanzi"></span></div>
+                    <div><strong>Phiên âm:</strong> <span id="exPinyin"></span></div>
+                    <div><strong>Dịch:</strong> <span id="exVi"></span></div>
+                </div>
+                <div class="bar">
+                    <div id="progress" class="muted" aria-label="Số câu hiện tại">Câu: 0</div>
+                    <div id="score" class="score" aria-label="Số câu trả lời đúng">Đúng: 0</div>
+                </div>
+                <div class="quiz-controls">
+                    <button id="nextBtn" class="hidden" type="button" aria-label="Chuyển sang câu tiếp theo">Câu tiếp
+                        ▶</button>
+                </div>
+            </section>
+
+            <!-- Speaking Mode -->
+            <section id="speaking-card" class="speaking-card hidden" aria-labelledby="speaking-heading">
+                <h2 id="speaking-heading" class="sr-only">Chế độ Luyện nói</h2>
+                <div class="speaking-content">
+                    <div id="speaking-hanzi" class="speaking-hanzi" role="img" aria-label="Câu tiếng Trung cần đọc">
+                        你现在在哪个城市生活？</div>
+                    <div id="speaking-pinyin" class="speaking-pinyin" aria-label="Phiên âm pinyin">Nǐ xiànzài zài nǎge
+                        chéngshì shēnghuó?</div>
+                    <div class="speaking-controls" role="group" aria-label="Điều khiển chế độ nói">
+                        <button id="speak-btn" class="speak-btn" type="button" aria-label="Phát âm câu tiếng Trung">🔊
+                            Đọc</button>
+                        <button id="speaking-next-btn" class="speaking-next-btn" type="button"
+                            aria-label="Chuyển sang câu tiếp theo">Câu tiếp ▶</button>
+                        <button id="random-toggle-btn" class="random-toggle-btn" type="button"
+                            aria-label="Bật/tắt chế độ ngẫu nhiên">🎲 Random</button>
+                        <div class="tts-rate">
+                            <label for="ttsRate" class="muted">Tốc độ:</label>
+                            <input id="ttsRate" type="range" min="0.5" max="1.5" step="0.1" value="0.8"
+                                aria-label="Điều chỉnh tốc độ phát âm" />
+                            <span id="ttsRateValue" class="muted" aria-live="polite">0.8x</span>
+                        </div>
+                        <button id="viZhBtn" class="speak-btn hidden" type="button"
+                            aria-label="Phát âm tiếng Việt rồi tiếng Trung">▶ VI→ZH</button>
+                        <label class="autoplay-label">
+                            <input id="autoplayToggle" type="checkbox" aria-label="Tự động phát âm" />
+                            <span class="muted">Tự động phát</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="speaking-bar">
+                    <div id="speaking-progress" class="muted" aria-label="Số câu hiện tại">Câu: 0</div>
+                    <div class="speaking-mode-indicator" aria-label="Chế độ hiện tại">📢 Chế độ nói</div>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script src="script.js?v=tts2"></script>
