@@ -1,23 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Quiz Hán tự - Pinyin | Học tiếng Trung hiệu quả</title>
-    <meta name="description"
-        content="Ứng dụng học tiếng Trung với quiz Hán tự - Pinyin và luyện nói. Hỗ trợ HSK 1-3 và chế độ luyện nói.">
-    <meta name="keywords" content="học tiếng trung, hán tự, pinyin, HSK, quiz, luyện nói">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=ui2024">
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>中</text></svg>">
-</head>
+    <meta
+      name="description"
+      content="Ứng dụng học tiếng Trung với quiz Hán tự - Pinyin và luyện nói. Hỗ trợ HSK 1-3 và chế độ luyện nói."
+    />
+    <meta
+      name="keywords"
+      content="học tiếng trung, hán tự, pinyin, HSK, quiz, luyện nói"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css?v=ui2024" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>中</text></svg>"
+    />
+  </head>
 
-<body>
-    <div class="quiz">
+  <body>
+    <header>
+      <h1>Error</h1>
+      <p class="author">The system is currently under maintenance.</p>
+    </header>
+    <!-- <div class="quiz">
         <header>
             <h1>Quiz Hán tự → Pinyin</h1>
             <p class="author">Tác giả: Bùi Giang Nam</p>
@@ -49,10 +63,10 @@
                     để reset focus.</span>
             </div>
 
-            <div id="status" class="status muted" role="status" aria-live="polite">Chọn một bộ từ để bắt đầu học.</div>
+            <div id="status" class="status muted" role="status" aria-live="polite">Chọn một bộ từ để bắt đầu học.</div> -->
 
-            <!-- Quiz Mode -->
-            <section id="card" class="quiz-card hidden" aria-labelledby="quiz-heading">
+    <!-- Quiz Mode -->
+    <!-- <section id="card" class="quiz-card hidden" aria-labelledby="quiz-heading">
                 <h2 id="quiz-heading" class="sr-only">Chế độ Quiz</h2>
                 <div id="hanzi" class="hanzi" role="img" aria-label="Chữ Hán cần đọc">字</div>
                 <div id="options" class="options" role="radiogroup" aria-label="Các lựa chọn pinyin"></div>
@@ -70,10 +84,10 @@
                     <button id="nextBtn" class="hidden" type="button" aria-label="Chuyển sang câu tiếp theo">Câu tiếp
                         ▶</button>
                 </div>
-            </section>
+            </section> -->
 
-            <!-- Speaking Mode -->
-            <section id="speaking-card" class="speaking-card hidden" aria-labelledby="speaking-heading">
+    <!-- Speaking Mode -->
+    <!-- <section id="speaking-card" class="speaking-card hidden" aria-labelledby="speaking-heading">
                 <h2 id="speaking-heading" class="sr-only">Chế độ Luyện nói</h2>
                 <div class="speaking-content">
                     <div id="speaking-hanzi" class="speaking-hanzi" role="img" aria-label="Câu tiếng Trung cần đọc">
@@ -107,72 +121,81 @@
                 </div>
             </section>
         </main>
-    </div>
+    </div> -->
 
     <script src="version.js"></script>
     <script src="script.js?v=ui2024"></script>
     <script src="random-fix.js?v=ui2024"></script>
     <script>
-        // Debug script
-        setTimeout(() => {
-            console.log('=== DEBUG SCRIPT ===');
-            console.log('Environment:', {
-                hostname: window.location.hostname,
-                protocol: window.location.protocol,
-                pathname: window.location.pathname
-            });
+      // Debug script
+      setTimeout(() => {
+        console.log("=== DEBUG SCRIPT ===");
+        console.log("Environment:", {
+          hostname: window.location.hostname,
+          protocol: window.location.protocol,
+          pathname: window.location.pathname,
+        });
 
-            const randomBtn = document.getElementById('random-toggle-btn');
-            console.log('Random button found:', !!randomBtn);
-            if (randomBtn) {
-                console.log('Button text:', randomBtn.textContent);
-                console.log('Button styles:', {
-                    background: window.getComputedStyle(randomBtn).background,
-                    cursor: window.getComputedStyle(randomBtn).cursor,
-                    pointerEvents: window.getComputedStyle(randomBtn).pointerEvents,
-                    zIndex: window.getComputedStyle(randomBtn).zIndex
-                });
+        const randomBtn = document.getElementById("random-toggle-btn");
+        console.log("Random button found:", !!randomBtn);
+        if (randomBtn) {
+          console.log("Button text:", randomBtn.textContent);
+          console.log("Button styles:", {
+            background: window.getComputedStyle(randomBtn).background,
+            cursor: window.getComputedStyle(randomBtn).cursor,
+            pointerEvents: window.getComputedStyle(randomBtn).pointerEvents,
+            zIndex: window.getComputedStyle(randomBtn).zIndex,
+          });
 
-                // No manual handlers - let random-fix.js handle everything
+          // No manual handlers - let random-fix.js handle everything
 
-                console.log('Manual click handler added');
-            }
+          console.log("Manual click handler added");
+        }
 
-            // Check if script.js loaded properly
-            console.log('Script.js functions available:', {
-                loadDataset: typeof window.loadDataset,
-                nextSpeakingQuestion: typeof window.nextSpeakingQuestion,
-                toggleRandomMode: typeof window.toggleRandomMode
-            });
+        // Check if script.js loaded properly
+        console.log("Script.js functions available:", {
+          loadDataset: typeof window.loadDataset,
+          nextSpeakingQuestion: typeof window.nextSpeakingQuestion,
+          toggleRandomMode: typeof window.toggleRandomMode,
+        });
 
-            // Test random functionality directly
-            window.testRandom = function () {
-                console.log('=== TEST RANDOM FUNCTION ===');
-                console.log('Current speaking data length:', window.speakingData ? window.speakingData.length : 'undefined');
-                console.log('Current speaking index:', window.speakingIndex);
-                console.log('Is random mode:', window.isRandomMode);
+        // Test random functionality directly
+        window.testRandom = function () {
+          console.log("=== TEST RANDOM FUNCTION ===");
+          console.log(
+            "Current speaking data length:",
+            window.speakingData ? window.speakingData.length : "undefined"
+          );
+          console.log("Current speaking index:", window.speakingIndex);
+          console.log("Is random mode:", window.isRandomMode);
 
-                if (window.speakingData && window.speakingData.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * window.speakingData.length);
-                    console.log('Random index would be:', randomIndex);
-                    console.log('Random question would be:', window.speakingData[randomIndex]);
-                }
-            };
+          if (window.speakingData && window.speakingData.length > 0) {
+            const randomIndex = Math.floor(
+              Math.random() * window.speakingData.length
+            );
+            console.log("Random index would be:", randomIndex);
+            console.log(
+              "Random question would be:",
+              window.speakingData[randomIndex]
+            );
+          }
+        };
 
-            // Test speaking next button directly
-            window.testSpeakingNext = function () {
-                console.log('=== TEST SPEAKING NEXT ===');
-                const speakingNextBtn = document.getElementById('speaking-next-btn');
-                console.log('Speaking next button found:', !!speakingNextBtn);
-                if (speakingNextBtn) {
-                    console.log('Clicking speaking next button...');
-                    speakingNextBtn.click();
-                }
-            };
+        // Test speaking next button directly
+        window.testSpeakingNext = function () {
+          console.log("=== TEST SPEAKING NEXT ===");
+          const speakingNextBtn = document.getElementById("speaking-next-btn");
+          console.log("Speaking next button found:", !!speakingNextBtn);
+          if (speakingNextBtn) {
+            console.log("Clicking speaking next button...");
+            speakingNextBtn.click();
+          }
+        };
 
-            console.log('Test functions added: window.testRandom() and window.testSpeakingNext()');
-        }, 1000);
+        console.log(
+          "Test functions added: window.testRandom() and window.testSpeakingNext()"
+        );
+      }, 1000);
     </script>
-</body>
-
+  </body>
 </html>
