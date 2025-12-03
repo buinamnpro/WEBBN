@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Học Ngữ Pháp HSK2</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <h1>Học Ngữ Pháp HSK</h1>
+    </div>
+    <div class="controls">
+      <label for="file-selector">Chọn cấp độ:</label>
+      <select id="file-selector">
+        <option value="hsk1">HSK1</option>
+        <option value="hsk2">HSK2</option>
+        <option value="hsk3">HSK3</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav id="sidebar">
+      <h2>Chủ đề</h2>
+      <ul id="sections"></ul>
+    </nav>
+
+    <main id="main">
+      <section id="text-view" class="panel">
+        <!-- parsed grammar goes here -->
+      </section>
+
+      <section id="flashcard-view" class="panel hidden">
+        <div class="card">
+          <div id="card-front" class="card-front"></div>
+          <div id="card-back" class="card-back hidden"></div>
+        </div>
+        <div class="card-controls">
+          <button id="prev-card">← Trước</button>
+          <button id="flip-card">Hiện/Ẩn giải nghĩa</button>
+          <button id="next-card">Sau →</button>
+        </div>
+        <div id="card-counter" class="counter"></div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="app-footer">Trợ giúp: bấm tiêu đề bên trái để chuyển đến mục tương ứng.</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

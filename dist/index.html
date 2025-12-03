@@ -1,197 +1,241 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Quiz Hán tự - Pinyin | Học tiếng Trung hiệu quả</title>
-    <meta
-      name="description"
-      content="Ứng dụng học tiếng Trung với quiz Hán tự - Pinyin và luyện nói. Hỗ trợ HSK 1-3 và chế độ luyện nói."
-    />
-    <meta
-      name="keywords"
-      content="học tiếng trung, hán tự, pinyin, HSK, quiz, luyện nói"
-    />
+    <title>Học Tiếng Trung | HSK 1-3</title>
+    <meta name="description" content="Ứng dụng học tiếng Trung toàn diện - Lý thuyết ngữ pháp và bài tập quiz HSK 1-3" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css?v=ui2024" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>中</text></svg>"
-    />
-  </head>
-
-  <body>
-    <div class="quiz">
-        <header>
-            <h1>Quiz Hán tự → Pinyin</h1>
-            <p class="author">Tác giả: Bùi Giang Nam</p>
-        </header>
-
-        <main>
-            <section class="dataset-section" aria-labelledby="dataset-heading">
-                <h3 id="dataset-heading">Chọn bộ từ:</h3>
-                <div class="dataset-buttons" role="group" aria-label="Chọn bộ từ vựng">
-                    <button class="dataset-btn" data-file="data/HSK1.csv" aria-label="Tải bộ từ HSK 1 với 150 từ">HSK 1
-                        (150 từ)</button>
-                    <button class="dataset-btn" data-file="data/HSK2.csv" aria-label="Tải bộ từ HSK 2 với 151 từ">HSK 2
-                        (151 từ)</button>
-                    <button class="dataset-btn" data-file="data/HSK3.csv" aria-label="Tải bộ từ HSK 3 với 296 từ">HSK 3
-                        (296 từ)</button>
-                    <button class="dataset-btn" data-file="data/all1-3.csv"
-                        aria-label="Tải tất cả từ HSK 1-3 với 596 từ">Tất cả HSK 1-3 (596 từ)</button>
-                    <button class="dataset-btn speaking-btn" data-file="data/onhsk3.txt"
-                        aria-label="Chế độ luyện nói HSK 3 với 76 câu">HSK 3 Nói (76 câu)</button>
-                    <button class="dataset-btn speaking-btn" data-file="data/dich.txt"
-                        aria-label="Chế độ đọc dịch Việt-Trung">VI→ZH (Đọc dịch)</button>
-                </div>
-            </section>
-
-            <div class="tips muted" role="note" aria-label="Hướng dẫn sử dụng">
-                <strong>Mẹo:</strong>
-                <span id="quiz-tips">1–4 để chọn đáp án; Enter/Space để sang câu tiếp. Trả lời sai được chọn lại.</span>
-                <span id="speaking-tips" class="hidden">S để đọc; Enter/Space để sang câu tiếp; R để bật/tắt random; Esc
-                    để reset focus.</span>
-            </div>
-
-            <div id="status" class="status muted" role="status" aria-live="polite">Chọn một bộ từ để bắt đầu học.</div>
-
-    <!-- Quiz Mode -->
-    <section id="card" class="quiz-card hidden" aria-labelledby="quiz-heading">
-                <h2 id="quiz-heading" class="sr-only">Chế độ Quiz</h2>
-                <div id="hanzi" class="hanzi" role="img" aria-label="Chữ Hán cần đọc">字</div>
-                <div id="options" class="options" role="radiogroup" aria-label="Các lựa chọn pinyin"></div>
-                <div id="example" class="example muted hidden" role="region" aria-label="Thông tin chi tiết">
-                    <div><strong>Nghĩa (VI):</strong> <span id="exMeaning"></span></div>
-                    <div><strong>Ví dụ (chữ Hán):</strong> <span id="exHanzi"></span></div>
-                    <div><strong>Phiên âm:</strong> <span id="exPinyin"></span></div>
-                    <div><strong>Dịch:</strong> <span id="exVi"></span></div>
-                </div>
-                <div class="bar">
-                    <div id="progress" class="muted" aria-label="Số câu hiện tại">Câu: 0</div>
-                    <div id="score" class="score" aria-label="Số câu trả lời đúng">Đúng: 0</div>
-                </div>
-                <div class="quiz-controls">
-                    <button id="nextBtn" class="hidden" type="button" aria-label="Chuyển sang câu tiếp theo">Câu tiếp
-                        ▶</button>
-                </div>
-            </section>
-
-    <!-- Speaking Mode -->
-    <section id="speaking-card" class="speaking-card hidden" aria-labelledby="speaking-heading">
-                <h2 id="speaking-heading" class="sr-only">Chế độ Luyện nói</h2>
-                <div class="speaking-content">
-                    <div id="speaking-hanzi" class="speaking-hanzi" role="img" aria-label="Câu tiếng Trung cần đọc">
-                        你现在在哪个城市生活？</div>
-                    <div id="speaking-pinyin" class="speaking-pinyin" aria-label="Phiên âm pinyin">Nǐ xiànzài zài nǎge
-                        chéngshì shēnghuó?</div>
-                    <div class="speaking-controls" role="group" aria-label="Điều khiển chế độ nói">
-                        <button id="speak-btn" class="speak-btn" type="button" aria-label="Phát âm câu tiếng Trung">🔊
-                            Đọc</button>
-                        <button id="speaking-next-btn" class="speaking-next-btn" type="button"
-                            aria-label="Chuyển sang câu tiếp theo">Câu tiếp ▶</button>
-                        <button id="random-toggle-btn" class="random-toggle-btn" type="button"
-                            aria-label="Bật/tắt chế độ ngẫu nhiên">🎲 Random</button>
-                        <div class="tts-rate">
-                            <label for="ttsRate" class="muted">Tốc độ:</label>
-                            <input id="ttsRate" type="range" min="0.5" max="1.5" step="0.1" value="0.8"
-                                aria-label="Điều chỉnh tốc độ phát âm" />
-                            <span id="ttsRateValue" class="muted" aria-live="polite">0.8x</span>
-                        </div>
-                        <button id="viZhBtn" class="speak-btn hidden" type="button"
-                            aria-label="Phát âm tiếng Việt rồi tiếng Trung">▶ VI→ZH</button>
-                        <label class="autoplay-label">
-                            <input id="autoplayToggle" type="checkbox" aria-label="Tự động phát âm" />
-                            <span class="muted">Tự động phát</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="speaking-bar">
-                    <div id="speaking-progress" class="muted" aria-label="Số câu hiện tại">Câu: 0</div>
-                    <div class="speaking-mode-indicator" aria-label="Chế độ hiện tại">📢 Chế độ nói</div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <script src="version.js"></script>
-    <script src="script.js?v=ui2024"></script>
-    <script src="random-fix.js?v=ui2024"></script>
-    <script>
-      // Debug script
-      setTimeout(() => {
-        console.log("=== DEBUG SCRIPT ===");
-        console.log("Environment:", {
-          hostname: window.location.hostname,
-          protocol: window.location.protocol,
-          pathname: window.location.pathname,
-        });
-
-        const randomBtn = document.getElementById("random-toggle-btn");
-        console.log("Random button found:", !!randomBtn);
-        if (randomBtn) {
-          console.log("Button text:", randomBtn.textContent);
-          console.log("Button styles:", {
-            background: window.getComputedStyle(randomBtn).background,
-            cursor: window.getComputedStyle(randomBtn).cursor,
-            pointerEvents: window.getComputedStyle(randomBtn).pointerEvents,
-            zIndex: window.getComputedStyle(randomBtn).zIndex,
-          });
-
-          // No manual handlers - let random-fix.js handle everything
-
-          console.log("Manual click handler added");
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>中</text></svg>" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        // Check if script.js loaded properly
-        console.log("Script.js functions available:", {
-          loadDataset: typeof window.loadDataset,
-          nextSpeakingQuestion: typeof window.nextSpeakingQuestion,
-          toggleRandomMode: typeof window.toggleRandomMode,
-        });
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-        // Test random functionality directly
-        window.testRandom = function () {
-          console.log("=== TEST RANDOM FUNCTION ===");
-          console.log(
-            "Current speaking data length:",
-            window.speakingData ? window.speakingData.length : "undefined"
-          );
-          console.log("Current speaking index:", window.speakingIndex);
-          console.log("Is random mode:", window.isRandomMode);
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
 
-          if (window.speakingData && window.speakingData.length > 0) {
-            const randomIndex = Math.floor(
-              Math.random() * window.speakingData.length
-            );
-            console.log("Random index would be:", randomIndex);
-            console.log(
-              "Random question would be:",
-              window.speakingData[randomIndex]
-            );
-          }
-        };
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
 
-        // Test speaking next button directly
-        window.testSpeakingNext = function () {
-          console.log("=== TEST SPEAKING NEXT ===");
-          const speakingNextBtn = document.getElementById("speaking-next-btn");
-          console.log("Speaking next button found:", !!speakingNextBtn);
-          if (speakingNextBtn) {
-            console.log("Clicking speaking next button...");
-            speakingNextBtn.click();
-          }
-        };
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
 
-        console.log(
-          "Test functions added: window.testRandom() and window.testSpeakingNext()"
-        );
-      }, 1000);
-    </script>
-  </body>
+        .header .subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .card-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .card h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2d3748;
+        }
+
+        .card p {
+            font-size: 16px;
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card .features {
+            list-style: none;
+            text-align: left;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .card .features li {
+            padding: 8px 0;
+            font-size: 14px;
+            color: #4a5568;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .card .features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .theory-card {
+            border-top: 4px solid #667eea;
+        }
+
+        .practice-card {
+            border-top: 4px solid #f56565;
+        }
+
+        .exam-card {
+            border-top: 4px solid #48bb78;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .header .subtitle {
+                font-size: 16px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+
+            .card-icon {
+                font-size: 48px;
+            }
+
+            .card h2 {
+                font-size: 24px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: fadeIn 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇨🇳 Học Tiếng Trung</h1>
+            <p class="subtitle">Hệ thống học HSK 1-3 toàn diện</p>
+        </div>
+
+        <div class="cards">
+            <a href="grammar/index.html" class="card theory-card">
+                <div class="card-icon">📚</div>
+                <h2>Ngữ Pháp</h2>
+                <p>Học ngữ pháp HSK 1-3 với ví dụ minh họa và flashcards</p>
+                <ul class="features">
+                    <li>Ngữ pháp HSK 1, 2, 3</li>
+                    <li>Ví dụ có phiên âm</li>
+                    <li>Chế độ flashcards</li>
+                    <li>Tìm kiếm nhanh</li>
+                </ul>
+            </a>
+
+            <a href="quiz/index.html" class="card practice-card">
+                <div class="card-icon">📖</div>
+                <h2>Từ Vựng</h2>
+                <p>Luyện tập quiz Hán tự - Pinyin với từ vựng HSK</p>
+                <ul class="features">
+                    <li>Quiz HSK 1, 2, 3</li>
+                    <li>Tất cả từ vựng</li>
+                    <li>Chế độ ngẫu nhiên</li>
+                    <li>Theo dõi tiến độ</li>
+                </ul>
+            </a>
+
+            <a href="hsk3/index.html" class="card exam-card">
+                <div class="card-icon">🎯</div>
+                <h2>Thi Thử HSK3</h2>
+                <p>Luyện nói và dịch Việt-Trung cho kỳ thi HSK3</p>
+                <ul class="features">
+                    <li>Luyện nói (76 câu)</li>
+                    <li>Dịch VI→ZH</li>
+                    <li>Phát âm chuẩn</li>
+                    <li>Tốc độ tùy chỉnh</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Tác giả: <strong>Bùi Giang Nam</strong></p>
+        </div>
+    </div>
+</body>
 </html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Từ vựng HSK | Luyện quiz Hán tự - Pinyin</title>
+    <meta
+      name="description"
+      content="Luyện tập từ vựng tiếng Trung với quiz Hán tự - Pinyin. Hỗ trợ HSK 1-3 và tất cả từ vựng."
+    />
+    <meta
+      name="keywords"
+      content="học tiếng trung, hán tự, pinyin, HSK, quiz, luyện nói"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css?v=ui2024" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>中</text></svg>"
+    />
+  </head>
+
+  <body>
+    <div class="quiz">
+        <header>
+            <h1>📖 Từ vựng HSK</h1>
+            <p class="author">Tác giả: Bùi Giang Nam</p>
+        </header>
+
+        <main>
+            <section class="dataset-section" aria-labelledby="dataset-heading">
+                <h3 id="dataset-heading">Chọn bộ từ:</h3>
+                <div class="dataset-buttons" role="group" aria-label="Chọn bộ từ vựng">
+                    <button class="dataset-btn" data-file="data/HSK1.csv" aria-label="Tải bộ từ HSK 1 với 150 từ">HSK 1
+                        (150 từ)</button>
+                    <button class="dataset-btn" data-file="data/HSK2.csv" aria-label="Tải bộ từ HSK 2 với 151 từ">HSK 2
+                        (151 từ)</button>
+                    <button class="dataset-btn" data-file="data/HSK3.csv" aria-label="Tải bộ từ HSK 3 với 296 từ">HSK 3
+                        (296 từ)</button>
+                    <button class="dataset-btn" data-file="data/all1-3.csv"
+                        aria-label="Tải tất cả từ HSK 1-3 với 596 từ">Tất cả HSK 1-3 (596 từ)</button>
+                </div>
+            </section>
+
+            <div class="tips muted" role="note" aria-label="Hướng dẫn sử dụng">
+                <strong>Hướng dẫn:</strong>
+                <span>1–4 để chọn đáp án; Enter/Space để sang câu tiếp. Trả lời sai được chọn lại.</span>
+            </div>
+
+            <div id="status" class="status muted" role="status" aria-live="polite">Chọn một bộ từ để bắt đầu học.</div>
+
+    <!-- Quiz Mode -->
+    <section id="card" class="quiz-card hidden" aria-labelledby="quiz-heading">
+                <h2 id="quiz-heading" class="sr-only">Chế độ Quiz</h2>
+                <div id="hanzi" class="hanzi" role="img" aria-label="Chữ Hán cần đọc">字</div>
+                <div id="options" class="options" role="radiogroup" aria-label="Các lựa chọn pinyin"></div>
+                <div id="example" class="example muted hidden" role="region" aria-label="Thông tin chi tiết">
+                    <div><strong>Nghĩa (VI):</strong> <span id="exMeaning"></span></div>
+                    <div><strong>Ví dụ (chữ Hán):</strong> <span id="exHanzi"></span></div>
+                    <div><strong>Phiên âm:</strong> <span id="exPinyin"></span></div>
+                    <div><strong>Dịch:</strong> <span id="exVi"></span></div>
+                </div>
+                <div class="bar">
+                    <div id="progress" class="muted" aria-label="Số câu hiện tại">Câu: 0</div>
+                    <div id="score" class="score" aria-label="Số câu trả lời đúng">Đúng: 0</div>
+                </div>
+                <div class="quiz-controls">
+                    <button id="nextBtn" class="hidden" type="button" aria-label="Chuyển sang câu tiếp theo">Câu tiếp
+                        ▶</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="version.js"></script>
+    <script src="script.js?v=ui2024"></script>
+  </body>
+</html>

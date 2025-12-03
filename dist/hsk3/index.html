@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thi thử HSK3 | Luyện nói và dịch tiếng Trung</title>
+    <meta
+      name="description"
+      content="Ứng dụng luyện nói và dịch tiếng Trung cho kỳ thi HSK3. Hỗ trợ phát âm và tự động phát."
+    />
+    <meta
+      name="keywords"
+      content="HSK3, luyện nói tiếng trung, dịch Việt Trung, thi thử HSK"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>中</text></svg>"
+    />
+  </head>
+
+  <body>
+    <div class="hsk3-app">
+        <header>
+            <div class="header-content">
+                <a href="../index.html" class="back-btn" aria-label="Quay lại trang chủ">← Quay lại</a>
+                <h1>🎯 Thi thử HSK3</h1>
+                <p class="subtitle">Luyện nói và dịch Việt-Trung</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="mode-selection" aria-labelledby="mode-heading">
+                <h3 id="mode-heading">Chọn chế độ luyện tập:</h3>
+                <div class="mode-buttons" role="group" aria-label="Chọn chế độ luyện tập">
+                    <button class="mode-btn speaking-btn" data-file="data/onhsk3.txt"
+                        aria-label="Chế độ luyện nói HSK 3 với 76 câu">
+                        🗣️ Luyện Nói
+                        <span class="mode-desc">76 câu hội thoại HSK3</span>
+                    </button>
+                    <button class="mode-btn translate-btn" data-file="data/dich.txt"
+                        aria-label="Chế độ dịch từ tiếng Việt sang tiếng Trung">
+                        🔄 Dịch VI→ZH
+                        <span class="mode-desc">Luyện dịch Việt-Trung</span>
+                    </button>
+                </div>
+            </section>
+
+            <div class="tips muted" role="note" aria-label="Hướng dẫn sử dụng">
+                <strong>Hướng dẫn:</strong>
+                <span>S để đọc; Enter/Space để sang câu tiếp; R để bật/tắt random; Esc để reset focus.</span>
+            </div>
+
+            <div id="status" class="status muted" role="status" aria-live="polite">Chọn một chế độ để bắt đầu luyện tập.</div>
+
+            <!-- Speaking Mode -->
+            <section id="speaking-card" class="speaking-card hidden" aria-labelledby="speaking-heading">
+                <h2 id="speaking-heading" class="sr-only">Chế độ Luyện nói</h2>
+                <div class="speaking-content">
+                    <div id="speaking-hanzi" class="speaking-hanzi" role="img" aria-label="Câu tiếng Trung cần đọc">
+                        你现在在哪个城市生活？</div>
+                    <div id="speaking-pinyin" class="speaking-pinyin" aria-label="Phiên âm pinyin">Nǐ xiànzài zài nǎge
+                        chéngshì shēnghuó?</div>
+                    <div class="speaking-controls" role="group" aria-label="Điều khiển chế độ nói">
+                        <button id="speak-btn" class="speak-btn" type="button" aria-label="Phát âm câu tiếng Trung">🔊
+                            Đọc</button>
+                        <button id="speaking-next-btn" class="speaking-next-btn" type="button"
+                            aria-label="Chuyển sang câu tiếp theo">Câu tiếp ▶</button>
+                        <button id="random-toggle-btn" class="random-toggle-btn" type="button"
+                            aria-label="Bật/tắt chế độ ngẫu nhiên">🎲 Random</button>
+                        <div class="tts-rate">
+                            <label for="ttsRate" class="muted">Tốc độ:</label>
+                            <input id="ttsRate" type="range" min="0.5" max="1.5" step="0.1" value="0.8"
+                                aria-label="Điều chỉnh tốc độ phát âm" />
+                            <span id="ttsRateValue" class="muted" aria-live="polite">0.8x</span>
+                        </div>
+                        <button id="viZhBtn" class="speak-btn hidden" type="button"
+                            aria-label="Phát âm tiếng Việt rồi tiếng Trung">▶ VI→ZH</button>
+                        <label class="autoplay-label">
+                            <input id="autoplayToggle" type="checkbox" aria-label="Tự động phát âm" />
+                            <span class="muted">Tự động phát</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="speaking-bar">
+                    <div id="speaking-progress" class="muted" aria-label="Số câu hiện tại">Câu: 0</div>
+                    <div class="speaking-mode-indicator" aria-label="Chế độ hiện tại">📢 Chế độ luyện tập</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
