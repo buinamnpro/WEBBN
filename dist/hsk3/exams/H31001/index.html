@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK 3 - H31001 | Đề thi thử</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>中</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            background: white;
+            color: #48bb78;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .back-link:hover {
+            background: #f0fff4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-size: 2.2em;
+            background: linear-gradient(90deg, #48bb78, #2f855a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: #7f8c8d; font-size: 1.1em; }
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .section-title {
+            font-size: 1.5em;
+            color: #38a169;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(72,187,120,0.3);
+        }
+        .part-title {
+            color: #e67e22;
+            font-size: 1.2em;
+            margin: 20px 0 15px;
+            font-weight: bold;
+        }
+        .question {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            border: 1px solid #e9ecef;
+        }
+        .question:hover { background: #f1f3f4; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .question-num {
+            display: inline-block;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .question-text { margin: 10px 0; font-size: 1.1em; color: #2c3e50; }
+        .options { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #e9ecef;
+        }
+        .option:hover { background: #f8f9fa; border-color: #dee2e6; }
+        .option input { display: none; }
+        .option.selected {
+            background: rgba(72,187,120,0.1);
+            border-color: #48bb78;
+        }
+        .option.correct {
+            background: rgba(46,204,113,0.15) !important;
+            border-color: #2ecc71 !important;
+        }
+        .option.wrong {
+            background: rgba(231,76,60,0.15) !important;
+            border-color: #e74c3c !important;
+        }
+        .option-letter {
+            width: 28px;
+            height: 28px;
+            background: #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            color: #495057;
+        }
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .image-option {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid #e9ecef;
+            transition: all 0.2s;
+        }
+        .image-option:hover { background: #f8f9fa; border-color: #dee2e6; }
+        .image-option.selected { border-color: #48bb78; background: rgba(72,187,120,0.1); }
+        .image-option img {
+            max-width: 100%;
+            max-height: 100px;
+            border-radius: 8px;
+        }
+        .image-option span { display: block; margin-top: 5px; font-weight: bold; color: #495057; }
+        select {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            background: white;
+            color: #2c3e50;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        select option { background: white; }
+        .tf-options { display: flex; gap: 15px; }
+        .tf-btn {
+            padding: 10px 25px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            color: #2c3e50;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.2s;
+        }
+        .tf-btn:hover { background: #f8f9fa; border-color: #dee2e6; }
+        .tf-btn.selected { border-color: #48bb78; background: rgba(72,187,120,0.1); color: #48bb78; }
+        .tf-btn.correct { border-color: #2ecc71 !important; background: rgba(46,204,113,0.15) !important; color: #27ae60 !important; }
+        .tf-btn.wrong { border-color: #e74c3c !important; background: rgba(231,76,60,0.15) !important; color: #c0392b !important; }
+        input[type="text"] {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            background: white;
+            color: #2c3e50;
+            font-size: 1.1em;
+            width: 100px;
+        }
+        input[type="text"]:focus { outline: none; border-color: #48bb78; }
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 30px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(72,187,120,0.3);
+        }
+        .result-box {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .result-box h2 { font-size: 2em; margin-bottom: 15px; color: #2c3e50; }
+        .score { font-size: 4em; color: #48bb78; font-weight: bold; }
+        .score-detail { margin-top: 15px; color: #7f8c8d; }
+        .pinyin { color: #38a169; font-size: 0.95em; font-weight: 500; }
+        .word-box {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #e9ecef;
+            border-radius: 6px;
+            margin: 3px;
+            color: #495057;
+        }
+        .answer-key {
+            color: #27ae60;
+            font-weight: bold;
+            display: none;
+            margin-top: 8px;
+        }
+        .selected-display {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 5px 15px;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border-radius: 20px;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+            color: white;
+        }
+        .selected-display:empty {
+            display: none;
+        }
+        select option:disabled {
+            color: #adb5bd;
+            background: #f8f9fa;
+        }
+        .used-answers {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .used-tag {
+            padding: 5px 12px;
+            background: rgba(239,68,68,0.15);
+            border: 1px solid #ef4444;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: #ef4444;
+        }
+        .available-tag {
+            padding: 5px 12px;
+            background: rgba(46,204,113,0.15);
+            border: 1px solid #2ecc71;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: #27ae60;
+        }
+        .match-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .match-btn {
+            min-width: 45px;
+            height: 45px;
+            padding: 8px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            background: white;
+            color: #495057;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .match-btn:hover:not(.disabled) {
+            background: #f8f9fa;
+            border-color: #adb5bd;
+            transform: scale(1.02);
+        }
+        .match-btn.selected {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border-color: #48bb78;
+            color: white;
+            box-shadow: 0 4px 15px rgba(72,187,120,0.3);
+        }
+        .match-btn.disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            text-decoration: line-through;
+            background: #f8f9fa;
+        }
+        .match-btn.correct {
+            background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+            border-color: #2ecc71 !important;
+            color: white !important;
+        }
+        .match-btn.wrong {
+            background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+            border-color: #e74c3c !important;
+            color: white !important;
+        }
+        .audio-player {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .audio-player .audio-icon {
+            font-size: 1.5em;
+        }
+        .audio-player .audio-label {
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .audio-player audio {
+            flex: 1;
+            height: 40px;
+        }
+        audio::-webkit-media-controls-panel {
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Quay lại HSK3</a>
+        <header>
+            <h1>新汉语水平考试 HSK（三级）</h1>
+            <p class="subtitle">H31001 - Đề thi thử tương tác</p>
+        </header>
+
+        <!-- 一、听力 LISTENING -->
+        <div class="section">
+            <h2 class="section-title">一、听力 Listening</h2>
+            
+            <h3 class="part-title">第一部分 Part 1 (1-10)</h3>
+            <p style="color:#7f8c8d;margin-bottom:15px;">选择与图片对应的答案 A-F（每个答案只能用一次）</p>
+            
+            <!-- Audio for questions 1-5 -->
+            <div class="audio-player">
+                <span class="audio-icon">🎧</span>
+                <span class="audio-label">Câu 1-5:</span>
+                <audio controls>
+                    <source src="H31001(1_5).mp3" type="audio/mpeg">
+                    Trình duyệt không hỗ trợ audio.
+                </audio>
+            </div>
+            
+            <div class="used-answers" id="status-group1">
+                <span style="color:#7f8c8d;margin-right:10px;">Câu 1-5:</span>
+                <span class="available-tag" data-val="A">A ✓</span>
+                <span class="available-tag" data-val="B">B ✓</span>
+                <span class="available-tag" data-val="C">C ✓</span>
+                <span class="available-tag" data-val="D">D ✓</span>
+                <span class="available-tag" data-val="E">E ✓</span>
+                <span class="available-tag" data-val="F">F ✓</span>
+            </div>
+            
+            <div class="images-grid">
+                <div class="image-option"><img src="images/image9.png" alt="A"><span>A</span></div>
+                <div class="image-option"><img src="images/image11.png" alt="B"><span>B</span></div>
+                <div class="image-option"><img src="images/image10.png" alt="C"><span>C</span></div>
+                <div class="image-option"><img src="images/image6.png" alt="D"><span>D</span></div>
+                <div class="image-option"><img src="images/image5.png" alt="E"><span>E</span></div>
+                <div class="image-option"><img src="images/image8.png" alt="F"><span>F</span></div>
+            </div>
+
+            <div class="question" data-q="1" data-answer="B" data-group="group1">
+                <span class="question-num">1</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 1, 'group1')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 1, 'group1')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 1, 'group1')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 1, 'group1')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 1, 'group1')">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectMatchBtn(this, 1, 'group1')">F</button>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="2" data-answer="C" data-group="group1">
+                <span class="question-num">2</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 2, 'group1')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 2, 'group1')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 2, 'group1')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 2, 'group1')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 2, 'group1')">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectMatchBtn(this, 2, 'group1')">F</button>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="3" data-answer="E" data-group="group1">
+                <span class="question-num">3</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 3, 'group1')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 3, 'group1')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 3, 'group1')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 3, 'group1')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 3, 'group1')">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectMatchBtn(this, 3, 'group1')">F</button>
+                </div>
+                <span class="answer-key">正确答案: E</span>
+            </div>
+            <div class="question" data-q="4" data-answer="F" data-group="group1">
+                <span class="question-num">4</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 4, 'group1')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 4, 'group1')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 4, 'group1')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 4, 'group1')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 4, 'group1')">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectMatchBtn(this, 4, 'group1')">F</button>
+                </div>
+                <span class="answer-key">正确答案: F</span>
+            </div>
+            <div class="question" data-q="5" data-answer="A" data-group="group1">
+                <span class="question-num">5</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 5, 'group1')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 5, 'group1')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 5, 'group1')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 5, 'group1')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 5, 'group1')">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectMatchBtn(this, 5, 'group1')">F</button>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+
+            <p style="color:#7f8c8d;margin:20px 0 15px;">第6-10题图片:</p>
+            
+            <!-- Audio for questions 6-10 -->
+            <div class="audio-player">
+                <span class="audio-icon">🎧</span>
+                <span class="audio-label">Câu 6-10:</span>
+                <audio controls>
+                    <source src="H31001(6_10).mp3" type="audio/mpeg">
+                    Trình duyệt không hỗ trợ audio.
+                </audio>
+            </div>
+            
+            <div class="used-answers" id="status-group2">
+                <span style="color:#7f8c8d;margin-right:10px;">Câu 6-10:</span>
+                <span class="available-tag" data-val="A">A ✓</span>
+                <span class="available-tag" data-val="B">B ✓</span>
+                <span class="available-tag" data-val="C">C ✓</span>
+                <span class="available-tag" data-val="D">D ✓</span>
+                <span class="available-tag" data-val="E">E ✓</span>
+            </div>
+            
+            <div class="images-grid">
+                <div class="image-option"><img src="images/image7.png" alt="A"><span>A</span></div>
+                <div class="image-option"><img src="images/image3.png" alt="B"><span>B</span></div>
+                <div class="image-option"><img src="images/image2.png" alt="C"><span>C</span></div>
+                <div class="image-option"><img src="images/image4.png" alt="D"><span>D</span></div>
+                <div class="image-option"><img src="images/image1.png" alt="E"><span>E</span></div>
+            </div>
+
+            <div class="question" data-q="6" data-answer="B" data-group="group2">
+                <span class="question-num">6</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 6, 'group2')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 6, 'group2')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 6, 'group2')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 6, 'group2')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 6, 'group2')">E</button>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="7" data-answer="C" data-group="group2">
+                <span class="question-num">7</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 7, 'group2')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 7, 'group2')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 7, 'group2')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 7, 'group2')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 7, 'group2')">E</button>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="8" data-answer="A" data-group="group2">
+                <span class="question-num">8</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 8, 'group2')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 8, 'group2')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 8, 'group2')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 8, 'group2')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 8, 'group2')">E</button>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="9" data-answer="D" data-group="group2">
+                <span class="question-num">9</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 9, 'group2')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 9, 'group2')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 9, 'group2')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 9, 'group2')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 9, 'group2')">E</button>
+                </div>
+                <span class="answer-key">正确答案: D</span>
+            </div>
+            <div class="question" data-q="10" data-answer="E" data-group="group2">
+                <span class="question-num">10</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectMatchBtn(this, 10, 'group2')">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectMatchBtn(this, 10, 'group2')">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectMatchBtn(this, 10, 'group2')">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectMatchBtn(this, 10, 'group2')">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectMatchBtn(this, 10, 'group2')">E</button>
+                </div>
+                <span class="answer-key">正确答案: E</span>
+            </div>
+
+            <h3 class="part-title">第二部分 Part 2 (11-20) - 判断对错 True/False</h3>
+            
+            <!-- Audio for questions 11-20 -->
+            <div class="audio-player">
+                <span class="audio-icon">🎧</span>
+                <span class="audio-label">Câu 11-20:</span>
+                <audio controls>
+                    <source src="H31001(11_20).mp3" type="audio/mpeg">
+                    Trình duyệt không hỗ trợ audio.
+                </audio>
+            </div>
+            
+            <div class="question" data-q="11" data-answer="×">
+                <span class="question-num">11</span>
+                <span class="question-text">★ 北京话和普通话是相同的。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 11, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 11, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: ×</span>
+            </div>
+            <div class="question" data-q="12" data-answer="√">
+                <span class="question-num">12</span>
+                <span class="question-text">★ 会议室在8层。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 12, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 12, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: √</span>
+            </div>
+            <div class="question" data-q="13" data-answer="×">
+                <span class="question-num">13</span>
+                <span class="question-text">★ 他已经到了。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 13, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 13, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: ×</span>
+            </div>
+            <div class="question" data-q="14" data-answer="√">
+                <span class="question-num">14</span>
+                <span class="question-text">★ 这是辆旧车。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 14, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 14, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: √</span>
+            </div>
+            <div class="question" data-q="15" data-answer="√">
+                <span class="question-num">15</span>
+                <span class="question-text">★ 小孩子爱吃蛋糕。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 15, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 15, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: √</span>
+            </div>
+            <div class="question" data-q="16" data-answer="×">
+                <span class="question-num">16</span>
+                <span class="question-text">★ 他在北京玩了很多地方。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 16, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 16, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: ×</span>
+            </div>
+            <div class="question" data-q="17" data-answer="√">
+                <span class="question-num">17</span>
+                <span class="question-text">★ 周明坐火车时喜欢看报纸。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 17, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 17, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: √</span>
+            </div>
+            <div class="question" data-q="18" data-answer="√">
+                <span class="question-num">18</span>
+                <span class="question-text">★ 他喜欢音乐，也喜欢运动。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 18, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 18, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: √</span>
+            </div>
+            <div class="question" data-q="19" data-answer="×">
+                <span class="question-num">19</span>
+                <span class="question-text">★ 她对自己的工作没兴趣。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 19, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 19, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: ×</span>
+            </div>
+            <div class="question" data-q="20" data-answer="×">
+                <span class="question-num">20</span>
+                <span class="question-text">★ 他们在买空调。</span>
+                <div class="tf-options">
+                    <button class="tf-btn" onclick="selectTF(this, 20, '√')">√ 对</button>
+                    <button class="tf-btn" onclick="selectTF(this, 20, '×')">× 错</button>
+                </div>
+                <span class="answer-key">正确答案: ×</span>
+            </div>
+
+            <h3 class="part-title">第三部分 Part 3 (21-30)</h3>
+            
+            <!-- Audio for questions 21-30 -->
+            <div class="audio-player">
+                <span class="audio-icon">🎧</span>
+                <span class="audio-label">Câu 21-30:</span>
+                <audio controls>
+                    <source src="H31001(21_30).mp3" type="audio/mpeg">
+                    Trình duyệt không hỗ trợ audio.
+                </audio>
+            </div>
+            
+            <div class="question" data-q="21" data-answer="B">
+                <span class="question-num">21</span>
+                <span class="question-text">男的怎么了？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 21, 'A')"><span class="option-letter">A</span>迟到了</label>
+                    <label class="option" onclick="selectOption(this, 21, 'B')"><span class="option-letter">B</span>生病了</label>
+                    <label class="option" onclick="selectOption(this, 21, 'C')"><span class="option-letter">C</span>生气了</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="22" data-answer="C">
+                <span class="question-num">22</span>
+                <span class="question-text">他们最可能在哪里？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 22, 'A')"><span class="option-letter">A</span>教室</label>
+                    <label class="option" onclick="selectOption(this, 22, 'B')"><span class="option-letter">B</span>机场</label>
+                    <label class="option" onclick="selectOption(this, 22, 'C')"><span class="option-letter">C</span>宾馆</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="23" data-answer="C">
+                <span class="question-num">23</span>
+                <span class="question-text">关于大熊猫，可以知道什么？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 23, 'A')"><span class="option-letter">A</span>有两只</label>
+                    <label class="option" onclick="selectOption(this, 23, 'B')"><span class="option-letter">B</span>爱跳舞</label>
+                    <label class="option" onclick="selectOption(this, 23, 'C')"><span class="option-letter">C</span>是新来的</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="24" data-answer="C">
+                <span class="question-num">24</span>
+                <span class="question-text">今年下了几次雪了？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 24, 'A')"><span class="option-letter">A</span>一次</label>
+                    <label class="option" onclick="selectOption(this, 24, 'B')"><span class="option-letter">B</span>两次</label>
+                    <label class="option" onclick="selectOption(this, 24, 'C')"><span class="option-letter">C</span>三次</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="25" data-answer="B">
+                <span class="question-num">25</span>
+                <span class="question-text">女的要去哪儿？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 25, 'A')"><span class="option-letter">A</span>商店</label>
+                    <label class="option" onclick="selectOption(this, 25, 'B')"><span class="option-letter">B</span>书店</label>
+                    <label class="option" onclick="selectOption(this, 25, 'C')"><span class="option-letter">C</span>学校东门</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="26" data-answer="C">
+                <span class="question-num">26</span>
+                <span class="question-text">女的是教什么的？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 26, 'A')"><span class="option-letter">A</span>汉语</label>
+                    <label class="option" onclick="selectOption(this, 26, 'B')"><span class="option-letter">B</span>历史</label>
+                    <label class="option" onclick="selectOption(this, 26, 'C')"><span class="option-letter">C</span>数学</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="27" data-answer="A">
+                <span class="question-num">27</span>
+                <span class="question-text">男的主要是什么意思？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 27, 'A')"><span class="option-letter">A</span>喜欢看球赛</label>
+                    <label class="option" onclick="selectOption(this, 27, 'B')"><span class="option-letter">B</span>喜欢打篮球</label>
+                    <label class="option" onclick="selectOption(this, 27, 'C')"><span class="option-letter">C</span>喜欢参加比赛</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="28" data-answer="A">
+                <span class="question-num">28</span>
+                <span class="question-text">女的希望怎么样？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 28, 'A')"><span class="option-letter">A</span>买个新的</label>
+                    <label class="option" onclick="selectOption(this, 28, 'B')"><span class="option-letter">B</span>买个贵的</label>
+                    <label class="option" onclick="selectOption(this, 28, 'C')"><span class="option-letter">C</span>先借一个</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="29" data-answer="B">
+                <span class="question-num">29</span>
+                <span class="question-text">他们做什么了？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 29, 'A')"><span class="option-letter">A</span>上网</label>
+                    <label class="option" onclick="selectOption(this, 29, 'B')"><span class="option-letter">B</span>爬山</label>
+                    <label class="option" onclick="selectOption(this, 29, 'C')"><span class="option-letter">C</span>游泳</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="30" data-answer="C">
+                <span class="question-num">30</span>
+                <span class="question-text">他们打算在哪儿见面？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 30, 'A')"><span class="option-letter">A</span>国外</label>
+                    <label class="option" onclick="selectOption(this, 30, 'B')"><span class="option-letter">B</span>飞机上</label>
+                    <label class="option" onclick="selectOption(this, 30, 'C')"><span class="option-letter">C</span>老地方</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+
+            <h3 class="part-title">第四部分 Part 4 (31-40)</h3>
+            
+            <!-- Audio for questions 31-40 -->
+            <div class="audio-player">
+                <span class="audio-icon">🎧</span>
+                <span class="audio-label">Câu 31-40:</span>
+                <audio controls>
+                    <source src="H31001(31_40).mp3" type="audio/mpeg">
+                    Trình duyệt không hỗ trợ audio.
+                </audio>
+            </div>
+            
+            <div class="question" data-q="31" data-answer="B">
+                <span class="question-num">31</span>
+                <span class="question-text">他们在说什么？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 31, 'A')"><span class="option-letter">A</span>习惯</label>
+                    <label class="option" onclick="selectOption(this, 31, 'B')"><span class="option-letter">B</span>天气</label>
+                    <label class="option" onclick="selectOption(this, 31, 'C')"><span class="option-letter">C</span>文化</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="32" data-answer="B">
+                <span class="question-num">32</span>
+                <span class="question-text">说话人最可能是什么关系？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 32, 'A')"><span class="option-letter">A</span>夫妻</label>
+                    <label class="option" onclick="selectOption(this, 32, 'B')"><span class="option-letter">B</span>妈妈和儿子</label>
+                    <label class="option" onclick="selectOption(this, 32, 'C')"><span class="option-letter">C</span>爸爸和女儿</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="33" data-answer="B">
+                <span class="question-num">33</span>
+                <span class="question-text">那个行李箱是什么样的？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 33, 'A')"><span class="option-letter">A</span>很矮</label>
+                    <label class="option" onclick="selectOption(this, 33, 'B')"><span class="option-letter">B</span>很大</label>
+                    <label class="option" onclick="selectOption(this, 33, 'C')"><span class="option-letter">C</span>黄色的</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="34" data-answer="C">
+                <span class="question-num">34</span>
+                <span class="question-text">明天天气怎么样？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 34, 'A')"><span class="option-letter">A</span>多云</label>
+                    <label class="option" onclick="selectOption(this, 34, 'B')"><span class="option-letter">B</span>很热</label>
+                    <label class="option" onclick="selectOption(this, 34, 'C')"><span class="option-letter">C</span>更冷</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="35" data-answer="A">
+                <span class="question-num">35</span>
+                <span class="question-text">那个女孩儿是谁的孩子？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 35, 'A')"><span class="option-letter">A</span>邻居的</label>
+                    <label class="option" onclick="selectOption(this, 35, 'B')"><span class="option-letter">B</span>客人的</label>
+                    <label class="option" onclick="selectOption(this, 35, 'C')"><span class="option-letter">C</span>校长的</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="36" data-answer="C">
+                <span class="question-num">36</span>
+                <span class="question-text">天"短"了表示什么意思？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 36, 'A')"><span class="option-letter">A</span>夏天来了</label>
+                    <label class="option" onclick="selectOption(this, 36, 'B')"><span class="option-letter">B</span>月亮出来了</label>
+                    <label class="option" onclick="selectOption(this, 36, 'C')"><span class="option-letter">C</span>天黑得早了</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="37" data-answer="A">
+                <span class="question-num">37</span>
+                <span class="question-text">关于表演，下面哪个是对的？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 37, 'A')"><span class="option-letter">A</span>在二层</label>
+                    <label class="option" onclick="selectOption(this, 37, 'B')"><span class="option-letter">B</span>影响不大</label>
+                    <label class="option" onclick="selectOption(this, 37, 'C')"><span class="option-letter">C</span>已经结束了</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="38" data-answer="C">
+                <span class="question-num">38</span>
+                <span class="question-text">女的希望男的怎么样？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 38, 'A')"><span class="option-letter">A</span>不要离开</label>
+                    <label class="option" onclick="selectOption(this, 38, 'B')"><span class="option-letter">B</span>给她写信</label>
+                    <label class="option" onclick="selectOption(this, 38, 'C')"><span class="option-letter">C</span>有更好的成绩</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="39" data-answer="A">
+                <span class="question-num">39</span>
+                <span class="question-text">护照是在哪儿找到的？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 39, 'A')"><span class="option-letter">A</span>衬衫里</label>
+                    <label class="option" onclick="selectOption(this, 39, 'B')"><span class="option-letter">B</span>洗手间</label>
+                    <label class="option" onclick="selectOption(this, 39, 'C')"><span class="option-letter">C</span>椅子上</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="40" data-answer="A">
+                <span class="question-num">40</span>
+                <span class="question-text">男的刚才为什么没接电话？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 40, 'A')"><span class="option-letter">A</span>在洗澡</label>
+                    <label class="option" onclick="selectOption(this, 40, 'B')"><span class="option-letter">B</span>在睡觉</label>
+                    <label class="option" onclick="selectOption(this, 40, 'C')"><span class="option-letter">C</span>在看新闻</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+        </div>
+
+        <!-- 二、阅读 READING -->
+        <div class="section">
+            <h2 class="section-title">二、阅读 Reading</h2>
+            
+            <h3 class="part-title">第一部分 Part 1 (41-50) - 选择合适的回答</h3>
+            <p style="color:#95a5a6;margin-bottom:15px;">
+                A. 太好了！需要我帮忙吗？<br>
+                B. 今天把我饿坏了，还有什么吃的吗？<br>
+                C. 你最好再检查一下，看还有没有问题。<br>
+                D. 没问题，你就放心吧。<br>
+                E. 当然。我们先坐公共汽车，然后换地铁。<br>
+                F. 这条裤子你花了多少钱？
+            </p>
+            
+            <div class="question" data-q="41" data-answer="C">
+                <span class="question-num">41</span>
+                <span class="question-text">我的作业早就完成了。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 41)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 41)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 41)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 41)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 41)">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 41)">F</button>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="42" data-answer="B">
+                <span class="question-num">42</span>
+                <span class="question-text">你先来个苹果，我去给你做碗面条儿。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 42)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 42)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 42)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 42)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 42)">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 42)">F</button>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="43" data-answer="A">
+                <span class="question-num">43</span>
+                <span class="question-text">我终于有了自己的大房子了，明天就可以搬家了。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 43)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 43)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 43)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 43)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 43)">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 43)">F</button>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="44" data-answer="D">
+                <span class="question-num">44</span>
+                <span class="question-text">这几天我不在家，小狗就请你帮我照顾了。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 44)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 44)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 44)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 44)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 44)">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 44)">F</button>
+                </div>
+                <span class="answer-key">正确答案: D</span>
+            </div>
+            <div class="question" data-q="45" data-answer="F">
+                <span class="question-num">45</span>
+                <span class="question-text">姐姐给我买的，我也不太清楚。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 45)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 45)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 45)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 45)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 45)">E</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 45)">F</button>
+                </div>
+                <span class="answer-key">正确答案: F</span>
+            </div>
+
+            <p style="color:#95a5a6;margin:20px 0 15px;">
+                A. 银行马上就要关门了。<br>
+                B. 那是我叔叔的儿子，一岁多了。<br>
+                C. 把菜单儿给我，我们喝杯绿茶吧？<br>
+                D. 我的几个同事周末想去北京玩儿，但他们都不会开车。<br>
+                E. 昨天的雨下得非常大，我没带伞。
+            </p>
+
+            <div class="question" data-q="46" data-answer="B">
+                <span class="question-num">46</span>
+                <span class="question-text">这个小孩儿胖胖的，真可爱。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 46)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 46)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 46)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 46)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 46)">E</button>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="47" data-answer="D">
+                <span class="question-num">47</span>
+                <span class="question-text">我哥是司机，我问问他，看他有没有时间。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 47)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 47)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 47)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 47)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 47)">E</button>
+                </div>
+                <span class="answer-key">正确答案: D</span>
+            </div>
+            <div class="question" data-q="48" data-answer="E">
+                <span class="question-num">48</span>
+                <span class="question-text">你怎么又生病了？</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 48)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 48)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 48)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 48)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 48)">E</button>
+                </div>
+                <span class="answer-key">正确答案: E</span>
+            </div>
+            <div class="question" data-q="49" data-answer="A">
+                <span class="question-num">49</span>
+                <span class="question-text">没关系，我明天去也可以。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 49)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 49)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 49)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 49)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 49)">E</button>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="50" data-answer="C">
+                <span class="question-num">50</span>
+                <span class="question-text">好的，我也有些渴了。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 50)">A</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 50)">B</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 50)">C</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 50)">D</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 50)">E</button>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+
+            <h3 class="part-title">第二部分 Part 2 (51-60) - 填空</h3>
+            <p style="color:#95a5a6;margin-bottom:15px;">
+                A. 其实 &nbsp; B. 感冒 &nbsp; C. 附近 &nbsp; D. 舒服 &nbsp; E. 声音 &nbsp; F. 把
+            </p>
+
+            <div class="question" data-q="51" data-answer="F">
+                <span class="question-num">51</span>
+                <span class="question-text">电影马上就要开始了，（　）手机关了吧。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 51)">A 其实</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 51)">B 感冒</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 51)">C 附近</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 51)">D 舒服</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 51)">E 声音</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 51)">F 把</button>
+                </div>
+                <span class="answer-key">正确答案: F</span>
+            </div>
+            <div class="question" data-q="52" data-answer="D">
+                <span class="question-num">52</span>
+                <span class="question-text">他很高，这张桌子太低，坐着很不（　）。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 52)">A 其实</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 52)">B 感冒</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 52)">C 附近</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 52)">D 舒服</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 52)">E 声音</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 52)">F 把</button>
+                </div>
+                <span class="answer-key">正确答案: D</span>
+            </div>
+            <div class="question" data-q="53" data-answer="C">
+                <span class="question-num">53</span>
+                <span class="question-text">您可以选择火车站（　）的宾馆，住那儿会更方便。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 53)">A 其实</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 53)">B 感冒</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 53)">C 附近</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 53)">D 舒服</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 53)">E 声音</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 53)">F 把</button>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="54" data-answer="B">
+                <span class="question-num">54</span>
+                <span class="question-text">天气冷，你多穿点儿衣服，小心（　）。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 54)">A 其实</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 54)">B 感冒</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 54)">C 附近</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 54)">D 舒服</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 54)">E 声音</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 54)">F 把</button>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="55" data-answer="A">
+                <span class="question-num">55</span>
+                <span class="question-text">对一个女人来说，漂亮、聪明都很重要，但（　）更重要的是快乐。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 55)">A 其实</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 55)">B 感冒</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 55)">C 附近</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 55)">D 舒服</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 55)">E 声音</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 55)">F 把</button>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+
+            <p style="color:#95a5a6;margin:20px 0 15px;">
+                A. 刻 &nbsp; B. 一直 &nbsp; C. 节 &nbsp; D. 爱好 &nbsp; E. 被 &nbsp; F. 打扫
+            </p>
+
+            <div class="question" data-q="56" data-answer="A">
+                <span class="question-num">56</span>
+                <span class="question-text">A：请问，现在是十一点吗？<br>B：现在十一点十五了，您的表慢了一（　）。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 56)">A 刻</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 56)">B 一直</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 56)">C 节</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 56)">D 爱好</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 56)">E 被</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 56)">F 打扫</button>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="57" data-answer="B">
+                <span class="question-num">57</span>
+                <span class="question-text">A：最近怎么（　）没看见他？<br>B：他去旅游了，可能这个周末才能回来。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 57)">A 刻</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 57)">B 一直</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 57)">C 节</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 57)">D 爱好</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 57)">E 被</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 57)">F 打扫</button>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="58" data-answer="E">
+                <span class="question-num">58</span>
+                <span class="question-text">A：牛奶呢？<br>B：一定是（　）猫喝了。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 58)">A 刻</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 58)">B 一直</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 58)">C 节</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 58)">D 爱好</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 58)">E 被</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 58)">F 打扫</button>
+                </div>
+                <span class="answer-key">正确答案: E</span>
+            </div>
+            <div class="question" data-q="59" data-answer="F">
+                <span class="question-num">59</span>
+                <span class="question-text">A：你家的厨房真干净！<br>B：当然了，为了欢迎你，我已经（　）了两个多小时了。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 59)">A 刻</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 59)">B 一直</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 59)">C 节</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 59)">D 爱好</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 59)">E 被</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 59)">F 打扫</button>
+                </div>
+                <span class="answer-key">正确答案: F</span>
+            </div>
+            <div class="question" data-q="60" data-answer="C">
+                <span class="question-num">60</span>
+                <span class="question-text">A：买这么多鲜花，今天是谁的生日啊？<br>B：今天是9月10日，教师（　）！这是为老师准备的。</span>
+                <div class="match-buttons">
+                    <button class="match-btn" data-val="A" onclick="selectReadingBtn(this, 60)">A 刻</button>
+                    <button class="match-btn" data-val="B" onclick="selectReadingBtn(this, 60)">B 一直</button>
+                    <button class="match-btn" data-val="C" onclick="selectReadingBtn(this, 60)">C 节</button>
+                    <button class="match-btn" data-val="D" onclick="selectReadingBtn(this, 60)">D 爱好</button>
+                    <button class="match-btn" data-val="E" onclick="selectReadingBtn(this, 60)">E 被</button>
+                    <button class="match-btn" data-val="F" onclick="selectReadingBtn(this, 60)">F 打扫</button>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+
+            <h3 class="part-title">第三部分 Part 3 (61-70) - 阅读理解</h3>
+            
+            <div class="question" data-q="61" data-answer="A">
+                <span class="question-num">61</span>
+                <span class="question-text">人们常说：今天工作不努力，明天努力找工作。<br>★ 这句话的意思主要是：</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 61, 'A')"><span class="option-letter">A</span>要努力工作</label>
+                    <label class="option" onclick="selectOption(this, 61, 'B')"><span class="option-letter">B</span>明天会更好</label>
+                    <label class="option" onclick="selectOption(this, 61, 'C')"><span class="option-letter">C</span>时间过得太快</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="62" data-answer="A">
+                <span class="question-num">62</span>
+                <span class="question-text">请大家把黑板上的这些词写在本子上，回家后用这些词语写一个小故事，别忘了，最少写100字。<br>★ 说话人最可能是做什么的？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 62, 'A')"><span class="option-letter">A</span>老师</label>
+                    <label class="option" onclick="selectOption(this, 62, 'B')"><span class="option-letter">B</span>学生</label>
+                    <label class="option" onclick="selectOption(this, 62, 'C')"><span class="option-letter">C</span>经理</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="63" data-answer="C">
+                <span class="question-num">63</span>
+                <span class="question-text">我对这儿很满意，虽然没有花园，但是离河边很近，那里有草地，有大树，还有鸟；虽然冬天天气很冷，但是空气新鲜，而且房间里一点儿也不冷。<br>★ 使他觉得满意的是：</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 63, 'A')"><span class="option-letter">A</span>没有花园</label>
+                    <label class="option" onclick="selectOption(this, 63, 'B')"><span class="option-letter">B</span>房间很大</label>
+                    <label class="option" onclick="selectOption(this, 63, 'C')"><span class="option-letter">C</span>离河很近</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+            <div class="question" data-q="64" data-answer="B">
+                <span class="question-num">64</span>
+                <span class="question-text">昨天晚上睡得太晚，今天起床时已经8点多了，我刷了牙，洗了脸，就出来了，差点儿忘了关门。到了公司，会议已经开始了。没办法，我只能站在外面等休息时间。<br>★ 他今天早上：</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 64, 'A')"><span class="option-letter">A</span>没复习</label>
+                    <label class="option" onclick="selectOption(this, 64, 'B')"><span class="option-letter">B</span>迟到了</label>
+                    <label class="option" onclick="selectOption(this, 64, 'C')"><span class="option-letter">C</span>忘了关门</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="65" data-answer="B">
+                <span class="question-num">65</span>
+                <span class="question-text">我去年春节去过一次上海，今年再去的时候，发现那里的变化非常大。经过那条街道时，我几乎不认识了。<br>★ 根据这段话，可以知道：</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 65, 'A')"><span class="option-letter">A</span>现在是春节</label>
+                    <label class="option" onclick="selectOption(this, 65, 'B')"><span class="option-letter">B</span>上海变化很大</label>
+                    <label class="option" onclick="selectOption(this, 65, 'C')"><span class="option-letter">C</span>上海人很热情</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="66" data-answer="A">
+                <span class="question-num">66</span>
+                <span class="question-text">世界真的很小，我昨天才发现，你给小张介绍的男朋友是我妻子以前的同事。<br>★ 小张的男朋友是我妻子：</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 66, 'A')"><span class="option-letter">A</span>以前的同事</label>
+                    <label class="option" onclick="selectOption(this, 66, 'B')"><span class="option-letter">B</span>以前的丈夫</label>
+                    <label class="option" onclick="selectOption(this, 66, 'C')"><span class="option-letter">C</span>以前的男朋友</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="67" data-answer="A">
+                <span class="question-num">67</span>
+                <span class="question-text">下班后，在路上遇到一个老同学。好久没见面，我们就在公司旁边那个咖啡馆里坐了坐，一边喝咖啡一边说了些过去的事，所以回来晚了。<br>★ 根据这段话，可以知道：</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 67, 'A')"><span class="option-letter">A</span>他回到家了</label>
+                    <label class="option" onclick="selectOption(this, 67, 'B')"><span class="option-letter">B</span>他正在喝咖啡</label>
+                    <label class="option" onclick="selectOption(this, 67, 'C')"><span class="option-letter">C</span>咖啡馆在公园旁边</label>
+                </div>
+                <span class="answer-key">正确答案: A</span>
+            </div>
+            <div class="question" data-q="68" data-answer="B">
+                <span class="question-num">68</span>
+                <span class="question-text">小刘是一位小学老师，教三年级的数学，他虽然很年轻，但是课讲得很好，同学们都很喜欢他。<br>★ 学生为什么喜欢刘老师？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 68, 'A')"><span class="option-letter">A</span>很年轻</label>
+                    <label class="option" onclick="selectOption(this, 68, 'B')"><span class="option-letter">B</span>课讲得好</label>
+                    <label class="option" onclick="selectOption(this, 68, 'C')"><span class="option-letter">C</span>对学生要求高</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="69" data-answer="B">
+                <span class="question-num">69</span>
+                <span class="question-text">今天12号了，晚上陈阿姨要来家里，家里有菜，有鱼，还有些羊肉，但是没有水果了，你去买些香蕉、葡萄吧，再买个西瓜？<br>★ 家里需要买什么？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 69, 'A')"><span class="option-letter">A</span>鸡蛋</label>
+                    <label class="option" onclick="selectOption(this, 69, 'B')"><span class="option-letter">B</span>水果</label>
+                    <label class="option" onclick="selectOption(this, 69, 'C')"><span class="option-letter">C</span>果汁</label>
+                </div>
+                <span class="answer-key">正确答案: B</span>
+            </div>
+            <div class="question" data-q="70" data-answer="C">
+                <span class="question-num">70</span>
+                <span class="question-text">有人问我长得像谁，这个问题不太好回答。家里人一般觉得我的鼻子和耳朵像我爸爸，眼睛像我妈妈。<br>★ 关于他，下面哪个是对的？</span>
+                <div class="options">
+                    <label class="option" onclick="selectOption(this, 70, 'A')"><span class="option-letter">A</span>头发很长</label>
+                    <label class="option" onclick="selectOption(this, 70, 'B')"><span class="option-letter">B</span>不像妈妈</label>
+                    <label class="option" onclick="selectOption(this, 70, 'C')"><span class="option-letter">C</span>鼻子像爸爸</label>
+                </div>
+                <span class="answer-key">正确答案: C</span>
+            </div>
+        </div>
+
+        <!-- 三、书写 WRITING -->
+        <div class="section">
+            <h2 class="section-title">三、书写 Writing</h2>
+            
+            <h3 class="part-title">第一部分 Part 1 (71-75) - 排列词语组成句子</h3>
+            
+            <div class="question" data-q="71" data-answer="弟弟高兴地笑了">
+                <span class="question-num">71</span>
+                <span class="question-text">
+                    <span class="word-box">弟弟</span>
+                    <span class="word-box">笑了</span>
+                    <span class="word-box">高兴地</span>
+                </span>
+                <br><br>
+                <input type="text" id="q71" placeholder="写出正确句子" style="width:100%;">
+                <span class="answer-key">正确答案: 弟弟高兴地笑了。</span>
+            </div>
+            <div class="question" data-q="72" data-answer="上午的考试比较简单">
+                <span class="question-num">72</span>
+                <span class="question-text">
+                    <span class="word-box">简单</span>
+                    <span class="word-box">上午的考试</span>
+                    <span class="word-box">比较</span>
+                </span>
+                <br><br>
+                <input type="text" id="q72" placeholder="写出正确句子" style="width:100%;">
+                <span class="answer-key">正确答案: 上午的考试比较简单。</span>
+            </div>
+            <div class="question" data-q="73" data-answer="这个城市的环境变得越来越好了">
+                <span class="question-num">73</span>
+                <span class="question-text">
+                    <span class="word-box">越来越好</span>
+                    <span class="word-box">变得</span>
+                    <span class="word-box">这个城市的环境</span>
+                    <span class="word-box">了</span>
+                </span>
+                <br><br>
+                <input type="text" id="q73" placeholder="写出正确句子" style="width:100%;">
+                <span class="answer-key">正确答案: 这个城市的环境变得越来越好了。</span>
+            </div>
+            <div class="question" data-q="74" data-answer="那位医生送给他一个礼物">
+                <span class="question-num">74</span>
+                <span class="question-text">
+                    <span class="word-box">送给他</span>
+                    <span class="word-box">那位</span>
+                    <span class="word-box">医生</span>
+                    <span class="word-box">一个礼物</span>
+                </span>
+                <br><br>
+                <input type="text" id="q74" placeholder="写出正确句子" style="width:100%;">
+                <span class="answer-key">正确答案: 那位医生送给他一个礼物。</span>
+            </div>
+            <div class="question" data-q="75" data-answer="其他班的成绩也有很大提高">
+                <span class="question-num">75</span>
+                <span class="question-text">
+                    <span class="word-box">其他班的成绩</span>
+                    <span class="word-box">有</span>
+                    <span class="word-box">也</span>
+                    <span class="word-box">很大</span>
+                    <span class="word-box">提高</span>
+                </span>
+                <br><br>
+                <input type="text" id="q75" placeholder="写出正确句子" style="width:100%;">
+                <span class="answer-key">正确答案: 其他班的成绩也有很大提高。</span>
+            </div>
+
+            <h3 class="part-title">第二部分 Part 2 (76-80) - 根据拼音写汉字</h3>
+            
+            <div class="question" data-q="76" data-answer="出">
+                <span class="question-num">76</span>
+                <span class="question-text">医院离这儿很远，我们坐（<span class="pinyin">chū</span>）租车去吧。</span>
+                <br><br>
+                <input type="text" id="q76" placeholder="写汉字" maxlength="1">
+                <span class="answer-key">正确答案: 出</span>
+            </div>
+            <div class="question" data-q="77" data-answer="元">
+                <span class="question-num">77</span>
+                <span class="question-text">一（<span class="pinyin">yuán</span>）是10角，一角是10分。</span>
+                <br><br>
+                <input type="text" id="q77" placeholder="写汉字" maxlength="1">
+                <span class="answer-key">正确答案: 元</span>
+            </div>
+            <div class="question" data-q="78" data-answer="叫">
+                <span class="question-num">78</span>
+                <span class="question-text">我不认识他，你知道他姓什么、（<span class="pinyin">jiào</span>）什么吗？</span>
+                <br><br>
+                <input type="text" id="q78" placeholder="写汉字" maxlength="1">
+                <span class="answer-key">正确答案: 叫</span>
+            </div>
+            <div class="question" data-q="79" data-answer="中">
+                <span class="question-num">79</span>
+                <span class="question-text">（<span class="pinyin">Zhōng</span>）间穿红裙子的一定是他妹妹。</span>
+                <br><br>
+                <input type="text" id="q79" placeholder="写汉字" maxlength="1">
+                <span class="answer-key">正确答案: 中</span>
+            </div>
+            <div class="question" data-q="80" data-answer="米">
+                <span class="question-num">80</span>
+                <span class="question-text">我已经饱了，不想吃（<span class="pinyin">mǐ</span>）饭了。</span>
+                <br><br>
+                <input type="text" id="q80" placeholder="写汉字" maxlength="1">
+                <span class="answer-key">正确答案: 米</span>
+            </div>
+        </div>
+
+        <button class="btn-submit" onclick="submitTest()">提交答案 Submit</button>
+
+        <div class="result-box" id="resultBox">
+            <h2>考试结果 Test Result</h2>
+            <div class="score" id="scoreDisplay">0/80</div>
+            <div class="score-detail" id="scoreDetail"></div>
+        </div>
+    </div>
+
+    <script>
+        const answers = {};
+        const correctAnswers = {
+            1:'B',2:'C',3:'E',4:'F',5:'A',6:'B',7:'C',8:'A',9:'D',10:'E',
+            11:'×',12:'√',13:'×',14:'√',15:'√',16:'×',17:'√',18:'√',19:'×',20:'×',
+            21:'B',22:'C',23:'C',24:'C',25:'B',26:'C',27:'A',28:'A',29:'B',30:'C',
+            31:'B',32:'B',33:'B',34:'C',35:'A',36:'C',37:'A',38:'C',39:'A',40:'A',
+            41:'C',42:'B',43:'A',44:'D',45:'F',46:'B',47:'D',48:'E',49:'A',50:'C',
+            51:'F',52:'D',53:'C',54:'B',55:'A',56:'A',57:'B',58:'E',59:'F',60:'C',
+            61:'A',62:'A',63:'C',64:'B',65:'B',66:'A',67:'A',68:'B',69:'B',70:'C',
+            76:'出',77:'元',78:'叫',79:'中',80:'米'
+        };
+
+        // Track used answers for matching groups
+        const usedAnswers = {
+            group1: {}, // questions 1-5
+            group2: {}  // questions 6-10
+        };
+
+        function selectMatchBtn(btn, qNum, group) {
+            const newValue = btn.dataset.val;
+            const oldValue = answers[qNum];
+            
+            // If clicking on disabled button, ignore
+            if (btn.classList.contains('disabled')) {
+                return;
+            }
+            
+            // If clicking on already selected button, deselect it
+            if (btn.classList.contains('selected')) {
+                btn.classList.remove('selected');
+                delete usedAnswers[group][newValue];
+                answers[qNum] = null;
+                updateAllMatchButtons(group);
+                updateStatusDisplay(group);
+                return;
+            }
+            
+            // If there was an old value, release it
+            if (oldValue && usedAnswers[group][oldValue] === qNum) {
+                delete usedAnswers[group][oldValue];
+            }
+            
+            // Save new answer
+            usedAnswers[group][newValue] = qNum;
+            answers[qNum] = newValue;
+            
+            // Update buttons in this question
+            const questionDiv = btn.closest('.question');
+            questionDiv.querySelectorAll('.match-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            
+            // Update all buttons in the group
+            updateAllMatchButtons(group);
+            updateStatusDisplay(group);
+        }
+
+        function updateAllMatchButtons(group) {
+            const usedValues = Object.keys(usedAnswers[group]);
+            const questions = document.querySelectorAll(`[data-group="${group}"]`);
+            
+            questions.forEach(q => {
+                const qNum = parseInt(q.dataset.q);
+                const buttons = q.querySelectorAll('.match-btn');
+                
+                buttons.forEach(btn => {
+                    const val = btn.dataset.val;
+                    
+                    // If this value is used by another question, disable it
+                    if (usedValues.includes(val) && usedAnswers[group][val] !== qNum) {
+                        btn.classList.add('disabled');
+                    } else {
+                        btn.classList.remove('disabled');
+                    }
+                });
+            });
+        }
+
+        function updateStatusDisplay(group) {
+            const statusDiv = document.getElementById('status-' + group);
+            if (!statusDiv) return;
+            
+            const usedValues = Object.keys(usedAnswers[group]);
+            
+            statusDiv.querySelectorAll('[data-val]').forEach(tag => {
+                const val = tag.dataset.val;
+                if (usedValues.includes(val)) {
+                    tag.className = 'used-tag';
+                    tag.textContent = val + ' ✗';
+                } else {
+                    tag.className = 'available-tag';
+                    tag.textContent = val + ' ✓';
+                }
+            });
+        }
+
+        function selectAnswer(el, qNum) {
+            answers[qNum] = el.value;
+        }
+
+        function selectOption(el, qNum, value) {
+            const parent = el.closest('.question');
+            parent.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            answers[qNum] = value;
+        }
+
+        function selectReadingBtn(btn, qNum) {
+            const value = btn.dataset.val;
+            const parent = btn.closest('.question');
+            
+            // If clicking on already selected button, deselect it
+            if (btn.classList.contains('selected')) {
+                btn.classList.remove('selected');
+                answers[qNum] = null;
+                return;
+            }
+            
+            // Deselect all other buttons in this question
+            parent.querySelectorAll('.match-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            answers[qNum] = value;
+        }
+
+        function selectTF(el, qNum, value) {
+            const parent = el.closest('.question');
+            parent.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('selected'));
+            el.classList.add('selected');
+            answers[qNum] = value;
+        }
+
+        function submitTest() {
+            let correct = 0;
+            let total = 80;
+            let listening = 0, reading = 0, writing = 0;
+
+            // Check all answers
+            for (let i = 1; i <= 40; i++) {
+                const q = document.querySelector(`[data-q="${i}"]`);
+                if (answers[i] === correctAnswers[i]) {
+                    correct++;
+                    listening++;
+                    if (q) markCorrect(q, i);
+                } else {
+                    if (q) markWrong(q, i);
+                }
+            }
+            for (let i = 41; i <= 70; i++) {
+                const q = document.querySelector(`[data-q="${i}"]`);
+                if (answers[i] === correctAnswers[i]) {
+                    correct++;
+                    reading++;
+                    if (q) markCorrect(q, i);
+                } else {
+                    if (q) markWrong(q, i);
+                }
+            }
+            // Writing part 1 (71-75) - check text inputs
+            for (let i = 71; i <= 75; i++) {
+                const input = document.getElementById('q' + i);
+                if (input) {
+                    const q = input.closest('.question');
+                    // Simple check - just show answer
+                    q.querySelector('.answer-key').style.display = 'block';
+                }
+            }
+            // Writing part 2 (76-80)
+            for (let i = 76; i <= 80; i++) {
+                const input = document.getElementById('q' + i);
+                if (input) {
+                    const q = input.closest('.question');
+                    if (input.value.trim() === correctAnswers[i]) {
+                        correct++;
+                        writing++;
+                        input.style.borderColor = '#2ecc71';
+                        input.style.background = 'rgba(46,204,113,0.2)';
+                    } else {
+                        input.style.borderColor = '#e74c3c';
+                        input.style.background = 'rgba(231,76,60,0.2)';
+                    }
+                    q.querySelector('.answer-key').style.display = 'block';
+                }
+            }
+
+            // Show result
+            document.getElementById('scoreDisplay').textContent = correct + '/75';
+            document.getElementById('scoreDetail').innerHTML = 
+                `听力 Listening: ${listening}/40<br>
+                 阅读 Reading: ${reading}/30<br>
+                 书写 Writing (76-80): ${writing}/5`;
+            document.getElementById('resultBox').style.display = 'block';
+            document.getElementById('resultBox').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function markCorrect(q, num) {
+            // Handle match buttons (questions 1-10)
+            const matchBtn = q.querySelector('.match-btn.selected');
+            if (matchBtn) {
+                matchBtn.classList.add('correct');
+            }
+            // Handle regular options and TF buttons
+            const selected = q.querySelector('.option.selected, .tf-btn.selected');
+            if (selected) selected.classList.add('correct');
+            q.querySelector('.answer-key').style.display = 'block';
+        }
+
+        function markWrong(q, num) {
+            const correctAns = correctAnswers[num];
+            
+            // Handle match buttons (questions 1-10)
+            const matchBtnSelected = q.querySelector('.match-btn.selected');
+            if (matchBtnSelected) {
+                matchBtnSelected.classList.add('wrong');
+            }
+            // Show correct match button
+            q.querySelectorAll('.match-btn').forEach(btn => {
+                if (btn.dataset.val === correctAns) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            // Handle regular options
+            const selected = q.querySelector('.option.selected, .tf-btn.selected');
+            if (selected) selected.classList.add('wrong');
+            
+            // Show correct answer for options
+            q.querySelectorAll('.option').forEach(opt => {
+                if (opt.textContent.includes(correctAns) || opt.querySelector('.option-letter')?.textContent === correctAns) {
+                    opt.classList.add('correct');
+                }
+            });
+            q.querySelectorAll('.tf-btn').forEach(btn => {
+                if (btn.textContent.includes(correctAns)) {
+                    btn.classList.add('correct');
+                }
+            });
+            q.querySelector('.answer-key').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+

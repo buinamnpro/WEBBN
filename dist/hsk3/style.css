@@ -170,6 +170,15 @@ body {
     border-color: #3b82f6;
 }
 
+.exam-btn {
+    text-decoration: none;
+}
+
+.exam-btn:hover {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-color: #f59e0b;
+}
+
 /* Tips and Status */
 .tips, .status {
     font-size: 0.9rem;
