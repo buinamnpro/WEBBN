@@ -92,7 +92,7 @@ h1 {
     margin-bottom: 24px;
 }
 
-.dataset-section h3 {
+.dataset-section h3, .mode-section h3 {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 16px;
@@ -138,6 +138,65 @@ h1 {
     color: white;
 }
 
+/* Mode Selection */
+.mode-section {
+    margin-bottom: 24px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-radius: var(--border-radius);
+    border: 1px solid #bae6fd;
+}
+
+.mode-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.mode-btn {
+    padding: 16px 12px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius);
+    background: white;
+    color: var(--gray-700);
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.mode-btn:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+    border-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+.mode-icon {
+    font-size: 24px;
+}
+
+.mode-name {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.mode-desc {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
 /* Tips and Status */
 .tips, .status {
     font-size: 14px;
@@ -180,11 +239,48 @@ h1 {
     font-size: 120px;
     line-height: 1;
     text-align: center;
-    margin: 32px 0 24px;
+    margin: 32px 0 16px;
     color: var(--gray-800);
     font-weight: 600;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     letter-spacing: 0.05em;
+}
+
+.hanzi.pinyin-display {
+    font-size: 48px;
+    color: var(--primary-color);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+}
+
+.hanzi-input-style {
+    font-size: 32px !important;
+    font-weight: 600;
+}
+
+.meaning-hint-inline {
+    font-size: 14px;
+    color: var(--gray-500);
+    font-weight: 400;
+}
+
+.hanzi.meaning-display {
+    font-size: 32px;
+    color: var(--gray-700);
+    font-weight: 600;
+    letter-spacing: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: var(--border-radius);
+    border: 2px solid var(--warning-color);
+}
+
+.meaning-hint {
+    text-align: center;
+    font-size: 18px;
+    color: var(--gray-600);
+    margin-bottom: 24px;
+    font-style: italic;
 }
 
 /* Options */
@@ -261,6 +357,200 @@ h1 {
     transform: scale(0.98);
 }
 
+/* Input Area for Easy/Hard Modes */
+.input-area {
+    margin: 24px 0;
+}
+
+.input-wrapper {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.answer-input {
+    flex: 1;
+    padding: 16px 20px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius);
+    font-size: 24px;
+    font-weight: 500;
+    text-align: center;
+    transition: var(--transition);
+    background: white;
+    color: var(--gray-800);
+}
+
+.answer-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.answer-input.correct {
+    border-color: var(--success-color);
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+}
+
+.answer-input.wrong {
+    border-color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.1);
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.submit-btn {
+    padding: 16px 24px;
+    border: none;
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+}
+
+.submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Hard Mode Input Area */
+.hard-input-area {
+    margin: 24px 0;
+}
+
+.hard-part {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.hard-part-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 12px;
+}
+
+.sentence-prompt {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--primary-color);
+    padding: 16px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-radius: var(--border-radius-sm);
+    border: 2px solid var(--primary-color);
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.input-status {
+    font-size: 20px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.input-status.correct {
+    color: var(--success-color);
+}
+
+.input-status.wrong {
+    color: var(--danger-color);
+}
+
+.submit-btn.full-width {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.hint-btn.small {
+    padding: 8px 14px;
+    font-size: 12px;
+}
+
+/* Hint Section */
+.hint-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.hint-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--warning-color);
+    border-radius: var(--border-radius-sm);
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.hint-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #fde68a, #fcd34d);
+    transform: translateY(-1px);
+}
+
+.hint-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.hint-text {
+    padding: 8px 16px;
+    background: var(--gray-100);
+    border-radius: var(--border-radius-sm);
+    font-size: 14px;
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+}
+
+/* Feedback */
+.feedback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: var(--border-radius-sm);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 16px 0;
+    animation: fadeIn 0.3s ease;
+}
+
+.feedback.correct {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--success-color);
+    color: var(--success-color);
+}
+
+.feedback.wrong {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+}
+
 /* Example Box */
 .example {
     background: var(--gray-50);
@@ -269,7 +559,7 @@ h1 {
     padding: 16px;
     margin-top: 24px;
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.8;
 }
 
 .example div {
@@ -364,7 +654,16 @@ h1 {
     
     .hanzi {
         font-size: 80px;
-        margin: 24px 0 20px;
+        margin: 24px 0 12px;
+    }
+    
+    .hanzi.pinyin-display {
+        font-size: 36px;
+    }
+    
+    .hanzi.meaning-display {
+        font-size: 24px;
+        padding: 16px;
     }
     
     .dataset-buttons {
@@ -377,6 +676,22 @@ h1 {
         padding: 12px 16px;
     }
     
+    .mode-buttons {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .mode-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+    }
+    
+    .mode-icon {
+        font-size: 28px;
+    }
+    
     .options {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -385,6 +700,39 @@ h1 {
     .option {
         font-size: 16px;
         padding: 16px 12px;
+    }
+    
+    .input-wrapper {
+        flex-direction: column;
+    }
+    
+    .answer-input {
+        font-size: 20px;
+        padding: 14px 16px;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 14px 20px;
+    }
+    
+    .hint-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .hint-btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .hard-part {
+        padding: 16px;
+    }
+    
+    .sentence-prompt {
+        font-size: 18px;
+        padding: 14px;
     }
     
     .bar {
@@ -415,7 +763,16 @@ h1 {
     
     .hanzi {
         font-size: 64px;
-        margin: 20px 0 16px;
+        margin: 20px 0 10px;
+    }
+    
+    .hanzi.pinyin-display {
+        font-size: 28px;
+    }
+    
+    .hanzi.meaning-display {
+        font-size: 20px;
+        padding: 12px;
     }
     
     .dataset-btn {
@@ -426,5 +783,9 @@ h1 {
     .option {
         font-size: 14px;
         padding: 14px 10px;
+    }
+    
+    .answer-input {
+        font-size: 18px;
     }
 }

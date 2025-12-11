@@ -18,7 +18,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css?v=ui2024" />
+    <link rel="stylesheet" href="style.css?v=ui2025" />
     <link
       rel="icon"
       type="image/svg+xml"
@@ -34,6 +34,7 @@
         </header>
 
         <main>
+            <!-- Dataset Selection -->
             <section class="dataset-section" aria-labelledby="dataset-heading">
                 <h3 id="dataset-heading">Chọn bộ từ:</h3>
                 <div class="dataset-buttons" role="group" aria-label="Chọn bộ từ vựng">
@@ -48,31 +49,135 @@
                 </div>
             </section>
 
+            <!-- Mode Selection -->
+            <section class="mode-section hidden" id="mode-section" aria-labelledby="mode-heading">
+                <h3 id="mode-heading">Chọn chế độ luyện tập:</h3>
+                <div class="mode-buttons" role="group" aria-label="Chọn chế độ luyện tập">
+                    <button class="mode-btn active" data-mode="quiz" aria-label="Chế độ trắc nghiệm">
+                        <span class="mode-icon">🎯</span>
+                        <span class="mode-name">Trắc nghiệm</span>
+                        <span class="mode-desc">Chọn pinyin đúng</span>
+                    </button>
+                    <button class="mode-btn" data-mode="easy" aria-label="Chế độ dễ - nhập pinyin">
+                        <span class="mode-icon">✏️</span>
+                        <span class="mode-name">Dễ</span>
+                        <span class="mode-desc">Xem 字 → Nhập pinyin</span>
+                    </button>
+                    <button class="mode-btn" data-mode="hard" aria-label="Chế độ khó - viết Hán tự và dịch câu">
+                        <span class="mode-icon">🔥</span>
+                        <span class="mode-name">Khó</span>
+                        <span class="mode-desc">Viết 字 + Dịch câu</span>
+                    </button>
+                </div>
+            </section>
+
             <div class="tips muted" role="note" aria-label="Hướng dẫn sử dụng">
                 <strong>Hướng dẫn:</strong>
-                <span>1–4 để chọn đáp án; Enter/Space để sang câu tiếp. Trả lời sai được chọn lại.</span>
+                <span id="tips-text">1–4 để chọn đáp án; Enter/Space để sang câu tiếp. Trả lời sai được chọn lại.</span>
             </div>
 
             <div id="status" class="status muted" role="status" aria-live="polite">Chọn một bộ từ để bắt đầu học.</div>
 
-    <!-- Quiz Mode -->
-    <section id="card" class="quiz-card hidden" aria-labelledby="quiz-heading">
+            <!-- Quiz Card -->
+            <section id="card" class="quiz-card hidden" aria-labelledby="quiz-heading">
                 <h2 id="quiz-heading" class="sr-only">Chế độ Quiz</h2>
+                
+                <!-- Display area - shows Hanzi or Pinyin based on mode -->
                 <div id="hanzi" class="hanzi" role="img" aria-label="Chữ Hán cần đọc">字</div>
+                <div id="meaning-hint" class="meaning-hint hidden"></div>
+                
+                <!-- Multiple Choice Options (Quiz mode) -->
                 <div id="options" class="options" role="radiogroup" aria-label="Các lựa chọn pinyin"></div>
+                
+                <!-- Text Input Area (Easy mode) -->
+                <div id="input-area" class="input-area hidden">
+                    <div class="input-wrapper">
+                        <input type="text" id="answer-input" class="answer-input" 
+                               name="easy-pinyin-answer"
+                               placeholder="Nhập pinyin..." 
+                               autocomplete="new-password" 
+                               autocapitalize="off"
+                               spellcheck="false"
+                               data-form-type="other">
+                        <button id="submit-btn" class="submit-btn" type="button">Kiểm tra</button>
+                    </div>
+                    <div class="hint-section">
+                        <button id="hint-btn" class="hint-btn" type="button">💡 Gợi ý</button>
+                        <span id="hint-text" class="hint-text hidden"></span>
+                    </div>
+                </div>
+                
+                <!-- Hard Mode: 2 Input Areas -->
+                <div id="hard-input-area" class="hard-input-area hidden">
+                    <!-- Part 1: Hanzi input -->
+                    <div class="hard-part">
+                        <div class="hard-part-label">1️⃣ Viết lại Hán tự trên: <span id="hanzi-meaning-hint" class="meaning-hint-inline"></span></div>
+                        <div class="input-wrapper">
+                            <input type="text" id="hanzi-input" class="answer-input hanzi-input-style" 
+                                   name="hard-hanzi-input-xyz"
+                                   placeholder="Viết Hán tự..." 
+                                   autocomplete="new-password" 
+                                   autocapitalize="off"
+                                   spellcheck="false"
+                                   data-form-type="other"
+                                   data-lpignore="true">
+                            <span id="hanzi-input-status" class="input-status"></span>
+                        </div>
+                        <div class="hint-section">
+                            <button id="hint-btn-hanzi" class="hint-btn small" type="button">💡 Gợi ý</button>
+                            <span id="hint-text-hanzi" class="hint-text hidden"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Part 2: Full sentence input -->
+                    <div class="hard-part">
+                        <div class="hard-part-label">2️⃣ Dịch câu sang tiếng Trung:</div>
+                        <div id="sentence-prompt" class="sentence-prompt"></div>
+                        <div class="input-wrapper">
+                            <input type="text" id="sentence-input" class="answer-input" 
+                                   name="hard-sentence-input-abc"
+                                   placeholder="Nhập câu tiếng Trung..." 
+                                   autocomplete="new-password" 
+                                   autocapitalize="off"
+                                   spellcheck="false"
+                                   data-form-type="other"
+                                   data-lpignore="true">
+                            <span id="sentence-status" class="input-status"></span>
+                        </div>
+                        <div class="hint-section">
+                            <button id="hint-btn-sentence" class="hint-btn small" type="button">💡 Gợi ý</button>
+                            <span id="hint-text-sentence" class="hint-text hidden"></span>
+                        </div>
+                    </div>
+                    
+                    <button id="submit-hard-btn" class="submit-btn full-width" type="button">Kiểm tra cả hai</button>
+                </div>
+                
+                <!-- Feedback for input modes -->
+                <div id="feedback" class="feedback hidden">
+                    <span id="feedback-icon"></span>
+                    <span id="feedback-text"></span>
+                </div>
+                
+                <!-- Example Box -->
                 <div id="example" class="example muted hidden" role="region" aria-label="Thông tin chi tiết">
+                    <div><strong>Hán tự:</strong> <span id="exHanziAnswer"></span></div>
+                    <div><strong>Pinyin:</strong> <span id="exPinyinAnswer"></span></div>
                     <div><strong>Nghĩa (VI):</strong> <span id="exMeaning"></span></div>
-                    <div><strong>Ví dụ (chữ Hán):</strong> <span id="exHanzi"></span></div>
+                    <div><strong>Ví dụ:</strong> <span id="exHanzi"></span></div>
                     <div><strong>Phiên âm:</strong> <span id="exPinyin"></span></div>
                     <div><strong>Dịch:</strong> <span id="exVi"></span></div>
                 </div>
+                
+                <!-- Progress Bar -->
                 <div class="bar">
                     <div id="progress" class="muted" aria-label="Số câu hiện tại">Câu: 0</div>
                     <div id="score" class="score" aria-label="Số câu trả lời đúng">Đúng: 0</div>
                 </div>
+                
+                <!-- Quiz Controls -->
                 <div class="quiz-controls">
-                    <button id="nextBtn" class="hidden" type="button" aria-label="Chuyển sang câu tiếp theo">Câu tiếp
-                        ▶</button>
+                    <button id="nextBtn" class="hidden" type="button" aria-label="Chuyển sang câu tiếp theo">Câu tiếp ▶</button>
                 </div>
             </section>
 
@@ -80,6 +185,6 @@
     </div>
 
     <script src="version.js"></script>
-    <script src="script.js?v=ui2024"></script>
+    <script src="script.js?v=ui2025"></script>
   </body>
 </html>

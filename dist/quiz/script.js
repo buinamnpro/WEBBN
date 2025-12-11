@@ -1,37 +1,72 @@
-// Quiz logic for vocabulary practice
-console.log('Quiz script loaded successfully');
+// Quiz logic for vocabulary practice - Enhanced version with 3 modes
+console.log('Quiz script loaded successfully - v2025');
 
 (function () {
-    // DOM Elements
+    // DOM Elements - Basic
     const nextBtn = document.getElementById('nextBtn');
     const statusEl = document.getElementById('status');
     const card = document.getElementById('card');
     const hanziEl = document.getElementById('hanzi');
+    const meaningHintEl = document.getElementById('meaning-hint');
     const optionsEl = document.getElementById('options');
     const progressEl = document.getElementById('progress');
     const scoreEl = document.getElementById('score');
     const exampleBox = document.getElementById('example');
+    const exHanziAnswerEl = document.getElementById('exHanziAnswer');
+    const exPinyinAnswerEl = document.getElementById('exPinyinAnswer');
     const exMeaningEl = document.getElementById('exMeaning');
     const exHanziEl = document.getElementById('exHanzi');
     const exPinyinEl = document.getElementById('exPinyin');
     const exViEl = document.getElementById('exVi');
+    const modeSection = document.getElementById('mode-section');
+    const tipsText = document.getElementById('tips-text');
+    const feedbackEl = document.getElementById('feedback');
+    const feedbackIcon = document.getElementById('feedback-icon');
+    const feedbackText = document.getElementById('feedback-text');
 
-    console.log('Elements found:', {
-        nextBtn: !!nextBtn,
-        statusEl: !!statusEl,
-        card: !!card,
-        hanziEl: !!hanziEl,
-        optionsEl: !!optionsEl
-    });
+    // DOM Elements - Easy mode input
+    const inputArea = document.getElementById('input-area');
+    const answerInput = document.getElementById('answer-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const hintBtn = document.getElementById('hint-btn');
+    const hintText = document.getElementById('hint-text');
+
+    // DOM Elements - Hard mode inputs
+    const hardInputArea = document.getElementById('hard-input-area');
+    const hanziInput = document.getElementById('hanzi-input');
+    const hanziInputStatus = document.getElementById('hanzi-input-status');
+    const hanziMeaningHint = document.getElementById('hanzi-meaning-hint');
+    const hintBtnHanzi = document.getElementById('hint-btn-hanzi');
+    const hintTextHanzi = document.getElementById('hint-text-hanzi');
+    const sentencePrompt = document.getElementById('sentence-prompt');
+    const sentenceInput = document.getElementById('sentence-input');
+    const sentenceStatus = document.getElementById('sentence-status');
+    const hintBtnSentence = document.getElementById('hint-btn-sentence');
+    const hintTextSentence = document.getElementById('hint-text-sentence');
+    const submitHardBtn = document.getElementById('submit-hard-btn');
 
     // State variables
-    let data = [];              // { hanzi, pinyin, meaningVi, exHanzi, exPinyin, exVi }
+    let data = [];
     let currentIndex = -1;
     let lastIndex = -1;
-    let answered = false;       // đã trả lời đúng chưa
+    let answered = false;
     let correctCount = 0;
     let questionCount = 0;
     let currentDataset = '';
+    let currentMode = 'quiz';
+    let hintLevel = 0;
+    let hintLevelHanzi = 0;
+    let hintLevelSentence = 0;
+    let attempts = 0;
+    let hanziPartCorrect = false;
+    let sentenceCorrect = false;
+
+    // Tips text for each mode
+    const tipsByMode = {
+        quiz: '1–4 để chọn đáp án; Enter/Space để sang câu tiếp.',
+        easy: 'Nhập pinyin (không dấu cũng được); Enter kiểm tra; Tab gợi ý.',
+        hard: 'Phần 1: Viết Hán tự. Phần 2: Dịch câu sang tiếng Trung.'
+    };
 
     function setStatus(msg) { 
         if (statusEl) statusEl.textContent = msg; 
@@ -48,27 +83,17 @@ console.log('Quiz script loaded successfully');
     }
 
     function resolveDatasetPath(inputPath) {
-        // Keep absolute URLs untouched
         if (/^https?:\/\//i.test(inputPath)) return inputPath;
-
-        if (inputPath.startsWith('../')) {
-            return inputPath;
-        }
-
+        if (inputPath.startsWith('../')) return inputPath;
+        
         const normalized = (inputPath || '').replace(/^\/+/, '');
         const currentPath = window.location.pathname;
-        console.log('Resolving path for:', normalized, 'from:', currentPath);
         
-        // If we're in /WEBBN/dist/quiz/ structure (Live Server from project root)
         if (currentPath.includes('/WEBBN/dist/quiz/')) {
             return '/WEBBN/dist/' + normalized;
-        }
-        // If we're in /quiz/ structure (served from dist/)
-        else if (currentPath.match(/^\/quiz\//)) {
+        } else if (currentPath.match(/^\/quiz\//)) {
             return '/' + normalized;
-        }
-        // Default: assume served from dist/
-        else {
+        } else {
             return '../' + normalized;
         }
     }
@@ -83,7 +108,6 @@ console.log('Quiz script loaded successfully');
     function csvParse(text) {
         const rows = [];
         let i = 0, field = '', row = [], inQuotes = false;
-        
         const pushField = () => { row.push(field); field = ''; };
         const pushRow = () => { rows.push(row); row = []; };
         
@@ -91,46 +115,25 @@ console.log('Quiz script loaded successfully');
             const ch = text[i];
             if (inQuotes) {
                 if (ch === '"') { 
-                    if (text[i + 1] === '"') { 
-                        field += '"'; 
-                        i++; 
-                    } else { 
-                        inQuotes = false; 
-                    } 
-                } else { 
-                    field += ch; 
-                }
+                    if (text[i + 1] === '"') { field += '"'; i++; } 
+                    else { inQuotes = false; } 
+                } else { field += ch; }
             } else {
-                if (ch === '"') { 
-                    inQuotes = true; 
-                } else if (ch === ',') { 
-                    pushField(); 
-                } else if (ch === '\n') { 
-                    pushField(); 
-                    pushRow(); 
-                } else if (ch === '\r') { 
-                    // Skip
-                } else { 
-                    field += ch; 
-                }
+                if (ch === '"') { inQuotes = true; } 
+                else if (ch === ',') { pushField(); } 
+                else if (ch === '\n') { pushField(); pushRow(); } 
+                else if (ch !== '\r') { field += ch; }
             }
             i++;
         }
-        
-        if (field.length > 0 || row.length > 0) { 
-            pushField(); 
-            pushRow(); 
-        }
-        
+        if (field.length > 0 || row.length > 0) { pushField(); pushRow(); }
         return rows.filter(r => r.some(c => String(c).trim().length));
     }
 
     function normalizeHeaderName(name) {
         return String(name).toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/\s+/g, ' ')
-            .trim();
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, ' ').trim();
     }
 
     function parseVietnameseCsv(text) {
@@ -142,15 +145,12 @@ console.log('Quiz script loaded successfully');
         const phienAmIdxs = header.map((h, idx) => h === 'phien am' ? idx : -1).filter(x => x !== -1);
         const idxExplain = header.indexOf('giai thich');
         const idxExHanzi = header.findIndex(h => h.startsWith('vi du'));
-        
         let idxPinyin = phienAmIdxs.length ? phienAmIdxs[0] : -1;
         let idxExPinyin = -1;
-        
         if (phienAmIdxs.length > 1) {
             const afterEx = phienAmIdxs.find(i => i > idxExHanzi);
             idxExPinyin = (afterEx != null ? afterEx : phienAmIdxs[phienAmIdxs.length - 1]);
         }
-        
         const idxExVi = header.indexOf('dich');
 
         const out = [];
@@ -161,12 +161,8 @@ console.log('Quiz script loaded successfully');
             const exHanzi = idxExHanzi >= 0 ? (r[idxExHanzi] || '').trim() : '';
             const exPinyin = idxExPinyin >= 0 ? (r[idxExPinyin] || '').trim() : '';
             const exVi = idxExVi >= 0 ? (r[idxExVi] || '').trim() : '';
-            
-            if (hanzi) {
-                out.push({ hanzi, pinyin, meaningVi, exHanzi, exPinyin, exVi });
-            }
+            if (hanzi) out.push({ hanzi, pinyin, meaningVi, exHanzi, exPinyin, exVi });
         }
-        
         return out;
     }
 
@@ -181,7 +177,6 @@ console.log('Quiz script loaded successfully');
     function pickNextIndex() {
         if (data.length === 0) return -1;
         if (data.length === 1) return 0;
-        
         let idx = Math.floor(Math.random() * data.length);
         if (idx === lastIndex) {
             idx = (idx + 1 + Math.floor(Math.random() * (data.length - 1))) % data.length;
@@ -197,164 +192,425 @@ console.log('Quiz script loaded successfully');
         return shuffleInPlace(choices);
     }
 
+    function normalizePinyin(str) {
+        return str.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z]/g, '');
+    }
+
+    function normalizeHanzi(str) {
+        return str.replace(/[。！？，、；：""''（）【】《》\s\.!\?,]/g, '');
+    }
+
+    function checkPinyinAnswer(userInput, correctAnswer) {
+        return normalizePinyin(userInput.trim()) === normalizePinyin(correctAnswer.trim());
+    }
+
+    function checkHanziAnswer(userInput, correctAnswer) {
+        return normalizeHanzi(userInput.trim()) === normalizeHanzi(correctAnswer.trim());
+    }
+
+    function generatePinyinHint(answer, level) {
+        const normalized = answer.toLowerCase();
+        if (level === 1) return `Bắt đầu: "${normalized.charAt(0)}..."`;
+        if (level === 2) {
+            const half = Math.ceil(normalized.length / 2);
+            return `${normalized.substring(0, half)}...`;
+        }
+        return `Đáp án: ${answer}`;
+    }
+
+    function generateSentenceHint(item, level) {
+        const answer = item.exHanzi || item.hanzi;
+        if (level === 1) return `Pinyin: ${item.exPinyin || '—'}`;
+        if (level === 2 && answer.length > 2) {
+            const third = Math.ceil(answer.length / 3);
+            return `Bắt đầu: ${answer.substring(0, third)}...`;
+        }
+        return `Đáp án: ${answer}`;
+    }
+
+    function resetQuestionState() {
+        answered = false;
+        hintLevel = 0;
+        hintLevelHanzi = 0;
+        hintLevelSentence = 0;
+        attempts = 0;
+        hanziPartCorrect = false;
+        sentenceCorrect = false;
+        
+        // Reset Easy mode UI
+        if (hintText) { hintText.classList.add('hidden'); hintText.textContent = ''; }
+        if (hintBtn) { hintBtn.disabled = false; hintBtn.textContent = '💡 Gợi ý'; }
+        if (feedbackEl) feedbackEl.classList.add('hidden');
+        if (answerInput) {
+            answerInput.value = '';
+            answerInput.classList.remove('correct', 'wrong');
+            answerInput.disabled = false;
+        }
+        if (submitBtn) submitBtn.disabled = false;
+        
+        // Reset Hard mode UI - Part 1 (Hanzi)
+        if (hanziInput) {
+            hanziInput.value = '';
+            hanziInput.classList.remove('correct', 'wrong');
+            hanziInput.disabled = false;
+        }
+        if (hanziInputStatus) { hanziInputStatus.textContent = ''; hanziInputStatus.className = 'input-status'; }
+        if (hintTextHanzi) { hintTextHanzi.classList.add('hidden'); hintTextHanzi.textContent = ''; }
+        if (hintBtnHanzi) { hintBtnHanzi.disabled = false; hintBtnHanzi.textContent = '💡 Gợi ý'; }
+        
+        // Reset Hard mode UI - Part 2 (Sentence)
+        if (sentenceInput) {
+            sentenceInput.value = '';
+            sentenceInput.classList.remove('correct', 'wrong');
+            sentenceInput.disabled = false;
+        }
+        if (sentenceStatus) { sentenceStatus.textContent = ''; sentenceStatus.className = 'input-status'; }
+        if (hintTextSentence) { hintTextSentence.classList.add('hidden'); hintTextSentence.textContent = ''; }
+        if (hintBtnSentence) { hintBtnSentence.disabled = false; hintBtnSentence.textContent = '💡 Gợi ý'; }
+        
+        if (submitHardBtn) submitHardBtn.disabled = false;
+        if (exampleBox) exampleBox.classList.add('hidden');
+    }
+
     function renderQuestion() {
         if (!data.length) return;
         
         currentIndex = pickNextIndex();
         if (currentIndex < 0) return;
         
-        answered = false;
+        resetQuestionState();
         const item = data[currentIndex];
         
-        if (hanziEl) {
-            hanziEl.textContent = item.hanzi;
-            hanziEl.setAttribute('aria-label', `Chữ Hán: ${item.hanzi}`);
-        }
+        // Hide all input areas first
+        if (optionsEl) optionsEl.classList.add('hidden');
+        if (inputArea) inputArea.classList.add('hidden');
+        if (hardInputArea) hardInputArea.classList.add('hidden');
+        if (meaningHintEl) meaningHintEl.classList.add('hidden');
         
-        // Hide example box initially
-        if (exampleBox) exampleBox.classList.add('hidden');
-        if (exMeaningEl) exMeaningEl.textContent = '';
-        if (exHanziEl) exHanziEl.textContent = '';
-        if (exPinyinEl) exPinyinEl.textContent = '';
-        if (exViEl) exViEl.textContent = '';
-
-        const options = buildOptions(item.pinyin);
-        if (options.length < 4) {
-            setStatus('Cần ít nhất 4 pinyin khác nhau để tạo đáp án. Hãy bổ sung dữ liệu.');
-            if (card) card.classList.add('hidden');
-            if (nextBtn) nextBtn.classList.add('hidden');
-            return;
-        }
-        
-        // Clear and build options
-        if (optionsEl) {
+        if (currentMode === 'quiz') {
+            // Quiz mode: Multiple choice
+            if (hanziEl) {
+                hanziEl.textContent = item.hanzi;
+                hanziEl.className = 'hanzi';
+            }
+            if (optionsEl) optionsEl.classList.remove('hidden');
+            
+            const options = buildOptions(item.pinyin);
+            if (options.length < 4) {
+                setStatus('Cần ít nhất 4 pinyin khác nhau.');
+                if (card) card.classList.add('hidden');
+                return;
+            }
+            
             optionsEl.innerHTML = '';
             for (let i = 0; i < options.length; i++) {
                 const btn = document.createElement('button');
                 btn.className = 'option';
                 btn.textContent = options[i];
                 btn.dataset.value = options[i];
-                btn.setAttribute('aria-label', `Lựa chọn ${i + 1}: ${options[i]}`);
-                btn.setAttribute('tabindex', '0');
-                btn.addEventListener('click', () => handleAnswer(btn, item));
+                btn.addEventListener('click', () => handleQuizAnswer(btn, item));
                 optionsEl.appendChild(btn);
             }
+            setStatus('Chọn pinyin đúng cho: ' + item.hanzi);
+            
+        } else if (currentMode === 'easy') {
+            // Easy mode: Type pinyin
+            if (hanziEl) {
+                hanziEl.textContent = item.hanzi;
+                hanziEl.className = 'hanzi';
+            }
+            if (inputArea) inputArea.classList.remove('hidden');
+            if (answerInput) {
+                answerInput.placeholder = 'Nhập pinyin...';
+                setTimeout(() => answerInput.focus(), 100);
+            }
+            setStatus('Nhập pinyin cho: ' + item.hanzi);
+            
+        } else if (currentMode === 'hard') {
+            // Hard mode: 2 inputs
+            // Part 1: Show Hanzi, user writes same Hanzi (practice writing)
+            if (hanziEl) {
+                hanziEl.textContent = item.hanzi;
+                hanziEl.className = 'hanzi';
+            }
+            if (hanziMeaningHint) {
+                hanziMeaningHint.textContent = item.meaningVi ? `(${item.meaningVi})` : '';
+            }
+            // Part 2: Show Vietnamese sentence, user writes Chinese sentence
+            if (hardInputArea) hardInputArea.classList.remove('hidden');
+            if (sentencePrompt) {
+                sentencePrompt.textContent = item.exVi || '—';
+            }
+            setTimeout(() => { if (hanziInput) hanziInput.focus(); }, 100);
+            setStatus('Hoàn thành cả 2 phần');
         }
 
         if (progressEl) progressEl.textContent = 'Câu: ' + (questionCount + 1);
-        setStatus('Chọn pinyin đúng cho chữ: ' + item.hanzi);
-        if (nextBtn) nextBtn.classList.remove('hidden');
+        if (nextBtn) nextBtn.classList.add('hidden');
         if (card) card.classList.remove('hidden');
-
-        // Focus management for accessibility
-        setTimeout(() => {
-            const firstOption = optionsEl?.querySelector('.option');
-            if (firstOption) firstOption.focus();
-        }, 100);
     }
 
-    function handleAnswer(buttonEl, item) {
+    function handleQuizAnswer(buttonEl, item) {
         if (answered) return;
         
         const chosen = buttonEl.dataset.value;
         const isCorrect = chosen === item.pinyin;
 
-        // Add visual feedback immediately
         buttonEl.classList.add('loading');
-
         setTimeout(() => {
             buttonEl.classList.remove('loading');
-
             if (!isCorrect) {
-                // Wrong answer - show it as wrong
                 buttonEl.classList.add('wrong');
                 buttonEl.disabled = true;
-                buttonEl.setAttribute('aria-label', buttonEl.getAttribute('aria-label') + ' - Sai');
-                setStatus(`Sai! Hãy thử lại. Đáp án đúng là: ${item.pinyin}`);
+                attempts++;
+                setStatus(`Sai! Thử lại. (${attempts} lần)`);
                 return;
             }
-
-            // Correct answer
+            
             answered = true;
-            const allOptions = optionsEl?.querySelectorAll('.option');
-            if (allOptions) {
-                allOptions.forEach(btn => {
-                    btn.disabled = true;
-                    if (btn.dataset.value === item.pinyin) {
-                        btn.classList.add('correct');
-                        btn.setAttribute('aria-label', btn.getAttribute('aria-label') + ' - Đúng');
-                    }
-                });
-            }
-
-            questionCount += 1;
-            correctCount += 1;
+            optionsEl?.querySelectorAll('.option').forEach(btn => {
+                btn.disabled = true;
+                if (btn.dataset.value === item.pinyin) btn.classList.add('correct');
+            });
+            
+            questionCount++;
+            correctCount++;
             if (scoreEl) scoreEl.textContent = 'Đúng: ' + correctCount + '/' + questionCount;
             lastIndex = currentIndex;
-
-            // Show example information
-            if (exMeaningEl) exMeaningEl.textContent = item.meaningVi || '—';
-            if (exHanziEl) exHanziEl.textContent = item.exHanzi || '—';
-            if (exPinyinEl) exPinyinEl.textContent = item.exPinyin || '—';
-            if (exViEl) exViEl.textContent = item.exVi || '—';
-            if (exampleBox) exampleBox.classList.remove('hidden');
-
-            if (nextBtn) {
-                nextBtn.classList.remove('hidden');
-                nextBtn.focus(); // Focus next button for accessibility
-            }
-
+            showExampleInfo(item);
+            if (nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.focus(); }
             setStatus(`Chính xác! Điểm: ${correctCount}/${questionCount}`);
-        }, 300);
+        }, 200);
+    }
+
+    function handleEasyAnswer() {
+        if (answered || !answerInput) return;
+        
+        const item = data[currentIndex];
+        const userAnswer = answerInput.value.trim();
+        
+        if (!userAnswer) { setStatus('Vui lòng nhập pinyin!'); return; }
+        
+        if (checkPinyinAnswer(userAnswer, item.pinyin)) {
+            answered = true;
+            answerInput.classList.add('correct');
+            answerInput.disabled = true;
+            if (submitBtn) submitBtn.disabled = true;
+            
+            if (feedbackEl) {
+                feedbackIcon.textContent = '✅';
+                feedbackText.textContent = 'Chính xác!';
+                feedbackEl.className = 'feedback correct';
+                feedbackEl.classList.remove('hidden');
+            }
+            
+            questionCount++;
+            correctCount++;
+            if (scoreEl) scoreEl.textContent = 'Đúng: ' + correctCount + '/' + questionCount;
+            lastIndex = currentIndex;
+            showExampleInfo(item);
+            if (nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.focus(); }
+            setStatus(`Chính xác! Điểm: ${correctCount}/${questionCount}`);
+        } else {
+            attempts++;
+            answerInput.classList.add('wrong');
+            if (feedbackEl) {
+                feedbackIcon.textContent = '❌';
+                feedbackText.textContent = `Sai! (${attempts} lần)`;
+                feedbackEl.className = 'feedback wrong';
+                feedbackEl.classList.remove('hidden');
+            }
+            setStatus('Sai! Thử lại hoặc bấm Gợi ý.');
+            setTimeout(() => { answerInput.classList.remove('wrong'); answerInput.select(); }, 500);
+        }
+    }
+
+    function handleHardAnswer() {
+        if (answered) return;
+        
+        const item = data[currentIndex];
+        const hanziAnswer = hanziInput?.value.trim() || '';
+        const sentenceAnswer = sentenceInput?.value.trim() || '';
+        
+        // Check Hanzi (Part 1)
+        if (!hanziPartCorrect) {
+            if (!hanziAnswer) {
+                setStatus('Vui lòng viết Hán tự!');
+                hanziInput?.focus();
+                return;
+            }
+            if (checkHanziAnswer(hanziAnswer, item.hanzi)) {
+                hanziPartCorrect = true;
+                if (hanziInput) hanziInput.classList.add('correct');
+                if (hanziInputStatus) { hanziInputStatus.textContent = '✅'; hanziInputStatus.className = 'input-status correct'; }
+            } else {
+                if (hanziInput) hanziInput.classList.add('wrong');
+                if (hanziInputStatus) { hanziInputStatus.textContent = '❌'; hanziInputStatus.className = 'input-status wrong'; }
+                setTimeout(() => { hanziInput?.classList.remove('wrong'); }, 500);
+                setStatus('Hán tự sai! Thử lại.');
+                return;
+            }
+        }
+        
+        // Check sentence (Part 2)
+        if (!sentenceCorrect) {
+            if (!sentenceAnswer) {
+                setStatus('Vui lòng nhập câu tiếng Trung!');
+                sentenceInput?.focus();
+                return;
+            }
+            const correctSentence = item.exHanzi || item.hanzi;
+            if (checkHanziAnswer(sentenceAnswer, correctSentence)) {
+                sentenceCorrect = true;
+                if (sentenceInput) sentenceInput.classList.add('correct');
+                if (sentenceStatus) { sentenceStatus.textContent = '✅'; sentenceStatus.className = 'input-status correct'; }
+            } else {
+                if (sentenceInput) sentenceInput.classList.add('wrong');
+                if (sentenceStatus) { sentenceStatus.textContent = '❌'; sentenceStatus.className = 'input-status wrong'; }
+                setTimeout(() => { sentenceInput?.classList.remove('wrong'); }, 500);
+                setStatus('Câu tiếng Trung sai! Thử lại.');
+                return;
+            }
+        }
+        
+        // Both correct!
+        if (hanziPartCorrect && sentenceCorrect) {
+            answered = true;
+            if (hanziInput) hanziInput.disabled = true;
+            if (sentenceInput) sentenceInput.disabled = true;
+            if (submitHardBtn) submitHardBtn.disabled = true;
+            
+            questionCount++;
+            correctCount++;
+            if (scoreEl) scoreEl.textContent = 'Đúng: ' + correctCount + '/' + questionCount;
+            lastIndex = currentIndex;
+            showExampleInfo(item);
+            if (nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.focus(); }
+            setStatus(`Xuất sắc! Điểm: ${correctCount}/${questionCount}`);
+        }
+    }
+
+    function showHintEasy() {
+        if (answered) return;
+        const item = data[currentIndex];
+        hintLevel++;
+        const hint = generatePinyinHint(item.pinyin, hintLevel);
+        if (hintText) { hintText.textContent = hint; hintText.classList.remove('hidden'); }
+        if (hintBtn) {
+            if (hintLevel >= 3) { hintBtn.textContent = '💡 Đã hiện'; hintBtn.disabled = true; }
+            else { hintBtn.textContent = `💡 Gợi ý (${hintLevel}/3)`; }
+        }
+    }
+
+    function generateHanziHint(item, level) {
+        const answer = item.hanzi;
+        if (level === 1) {
+            // Show first character if multi-character word
+            if (answer.length > 1) return `Chữ đầu: ${answer.charAt(0)}...`;
+            return `Số nét: khoảng ${answer.length * 8} nét`;
+        }
+        if (level === 2 && answer.length > 1) {
+            const half = Math.ceil(answer.length / 2);
+            return `${answer.substring(0, half)}...`;
+        }
+        return `Đáp án: ${answer}`;
+    }
+
+    function showHintHanzi() {
+        if (hanziPartCorrect) return;
+        const item = data[currentIndex];
+        // Show pinyin immediately
+        if (hintTextHanzi) { 
+            hintTextHanzi.textContent = `Pinyin: ${item.pinyin}`; 
+            hintTextHanzi.classList.remove('hidden'); 
+        }
+        if (hintBtnHanzi) { 
+            hintBtnHanzi.textContent = '💡 Đã hiện'; 
+            hintBtnHanzi.disabled = true; 
+        }
+    }
+
+    function showHintSentence() {
+        if (sentenceCorrect) return;
+        const item = data[currentIndex];
+        hintLevelSentence++;
+        const hint = generateSentenceHint(item, hintLevelSentence);
+        if (hintTextSentence) { hintTextSentence.textContent = hint; hintTextSentence.classList.remove('hidden'); }
+        if (hintBtnSentence) {
+            if (hintLevelSentence >= 3) { hintBtnSentence.textContent = '💡 Đã hiện'; hintBtnSentence.disabled = true; }
+            else { hintBtnSentence.textContent = `💡 (${hintLevelSentence}/3)`; }
+        }
+    }
+
+    function showExampleInfo(item) {
+        if (exHanziAnswerEl) exHanziAnswerEl.textContent = item.hanzi || '—';
+        if (exPinyinAnswerEl) exPinyinAnswerEl.textContent = item.pinyin || '—';
+        if (exMeaningEl) exMeaningEl.textContent = item.meaningVi || '—';
+        if (exHanziEl) exHanziEl.textContent = item.exHanzi || '—';
+        if (exPinyinEl) exPinyinEl.textContent = item.exPinyin || '—';
+        if (exViEl) exViEl.textContent = item.exVi || '—';
+        if (exampleBox) exampleBox.classList.remove('hidden');
     }
 
     function nextQuestion() { 
-        renderQuestion(); 
+        renderQuestion();
+        // Scroll to hanzi element
+        if (hanziEl) {
+            hanziEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function switchMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+        if (tipsText) tipsText.textContent = tipsByMode[mode] || tipsByMode.quiz;
+        
+        if (data.length > 0) {
+            correctCount = 0;
+            questionCount = 0;
+            if (scoreEl) scoreEl.textContent = 'Đúng: 0/0';
+            renderQuestion();
+        }
     }
 
     async function loadDataset(file) {
         try {
-            setStatus('Đang tải dữ liệu...');
+            setStatus('Đang tải...');
             const resolvedPath = resolveDatasetPath(file);
-            console.log('Loading dataset:', file, '->', resolvedPath);
-            
             const text = await fetchCsv(resolvedPath);
             data = parseVietnameseCsv(text);
             
-            console.log('Loaded data:', data.length, 'items');
-            
-            if (data.length === 0) {
-                throw new Error('Không có dữ liệu hợp lệ trong file CSV');
-            }
+            if (data.length === 0) throw new Error('Không có dữ liệu');
             
             currentDataset = file;
             correctCount = 0;
             questionCount = 0;
             currentIndex = -1;
             lastIndex = -1;
-            answered = false;
             
-            // Update UI
+            if (modeSection) modeSection.classList.remove('hidden');
             if (scoreEl) scoreEl.textContent = 'Đúng: 0/0';
             
             renderQuestion();
-            setStatus(`Đã tải ${data.length} từ vựng. Bắt đầu quiz!`);
-            
+            setStatus(`Đã tải ${data.length} từ. Bắt đầu!`);
         } catch (error) {
-            console.error('Error loading dataset:', error);
             setStatus('Lỗi: ' + error.message);
             if (card) card.classList.add('hidden');
         }
     }
 
-    // Event listeners
     function setupEventListeners() {
         // Dataset buttons
         document.querySelectorAll('.dataset-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const file = btn.dataset.file;
                 if (file) {
-                    // Update button states
                     document.querySelectorAll('.dataset-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     loadDataset(file);
@@ -362,58 +618,76 @@ console.log('Quiz script loaded successfully');
             });
         });
 
+        // Mode buttons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+                if (mode) switchMode(mode);
+            });
+        });
+
         // Next button
-        if (nextBtn) {
-            nextBtn.addEventListener('click', nextQuestion);
+        if (nextBtn) nextBtn.addEventListener('click', nextQuestion);
+
+        // Easy mode
+        if (submitBtn) submitBtn.addEventListener('click', handleEasyAnswer);
+        if (hintBtn) hintBtn.addEventListener('click', showHintEasy);
+        if (answerInput) {
+            answerInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); answered ? nextQuestion() : handleEasyAnswer(); }
+                else if (e.key === 'Tab' && !answered) { e.preventDefault(); showHintEasy(); }
+            });
+        }
+
+        // Hard mode
+        if (submitHardBtn) submitHardBtn.addEventListener('click', handleHardAnswer);
+        if (hintBtnHanzi) hintBtnHanzi.addEventListener('click', showHintHanzi);
+        if (hintBtnSentence) hintBtnSentence.addEventListener('click', showHintSentence);
+        
+        if (hanziInput) {
+            hanziInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); handleHardAnswer(); }
+                else if (e.key === 'Tab' && !hanziPartCorrect) { e.preventDefault(); showHintHanzi(); }
+            });
+        }
+        if (sentenceInput) {
+            sentenceInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); handleHardAnswer(); }
+                else if (e.key === 'Tab' && !sentenceCorrect) { e.preventDefault(); showHintSentence(); }
+            });
         }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT') return;
-
             const key = e.key.toLowerCase();
             
-            // Number keys for options
-            if (['1', '2', '3', '4'].includes(key)) {
-                const optionIndex = parseInt(key) - 1;
+            if (currentMode === 'quiz' && ['1', '2', '3', '4'].includes(key)) {
+                const idx = parseInt(key) - 1;
                 const options = optionsEl?.querySelectorAll('.option');
-                if (options && options[optionIndex] && !options[optionIndex].disabled) {
-                    options[optionIndex].click();
+                if (options?.[idx] && !options[idx].disabled) {
+                    options[idx].click();
                     e.preventDefault();
                 }
-                return;
             }
-
-            // Enter/Space for next question
+            
             if ((key === 'enter' || key === ' ') && answered) {
                 nextQuestion();
                 e.preventDefault();
-                return;
             }
         });
     }
 
-    // Initialize
     function init() {
         setupEventListeners();
-        setStatus('Chọn một bộ từ để bắt đầu học.');
-        console.log('Quiz initialized successfully');
+        setStatus('Chọn một bộ từ để bắt đầu.');
     }
 
-    // Wait for DOM content loaded
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
 
-    // Expose functions for debugging
-    window.quizDebug = {
-        loadDataset,
-        data: () => data,
-        currentIndex: () => currentIndex,
-        renderQuestion,
-        nextQuestion
-    };
-
+    window.quizDebug = { loadDataset, data: () => data, switchMode, renderQuestion };
 })();
