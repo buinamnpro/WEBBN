@@ -83,8 +83,45 @@ h1 {
     text-align: center;
     color: var(--gray-600);
     font-size: 14px;
-    margin: 0 0 32px 0;
+    margin: 0 0 16px 0;
     font-weight: 500;
+}
+
+/* AI Config Button */
+.ai-config-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 auto 24px;
+    padding: 10px 20px;
+    border: 2px solid var(--gray-300);
+    border-radius: 50px;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    color: var(--gray-700);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.ai-config-btn:hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.ai-config-btn.active {
+    border-color: var(--success-color);
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    color: #065f46;
+}
+
+.ai-config-btn.inactive {
+    border-color: var(--gray-300);
+    background: var(--gray-100);
+    color: var(--gray-500);
 }
 
 /* Dataset Selection */
@@ -549,6 +586,63 @@ h1 {
     background: rgba(239, 68, 68, 0.1);
     border: 1px solid var(--danger-color);
     color: var(--danger-color);
+}
+
+/* AI Feedback Box */
+.ai-feedback {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    margin-top: 16px;
+    animation: slideIn 0.3s ease;
+    line-height: 1.6;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ai-feedback.correct {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border: 2px solid var(--success-color);
+    color: #065f46;
+}
+
+.ai-feedback.wrong {
+    background: linear-gradient(135deg, #fef2f2, #fecaca);
+    border: 2px solid var(--danger-color);
+    color: #991b1b;
+}
+
+.ai-feedback .ai-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.ai-feedback .ai-message {
+    flex: 1;
+    font-weight: 500;
+}
+
+.ai-feedback .ai-model {
+    font-size: 11px;
+    opacity: 0.7;
+    font-weight: 400;
+    background: rgba(0,0,0,0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    white-space: nowrap;
 }
 
 /* Example Box */

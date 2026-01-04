@@ -1,8 +1,185 @@
-// Quiz logic for vocabulary practice - Enhanced version with 3 modes
-console.log('Quiz script loaded successfully - v2025');
+// Quiz logic for vocabulary practice - Enhanced version with 3 modes + AI Grammar Check
+console.log('Quiz script loaded successfully - v2025-AI');
 
 (function () {
+    // ============================================
+    // AI GRAMMAR CHECK - Google Gemini Integration
+    // ============================================
+    
+    // Danh sách models để thử (ưu tiên từ trên xuống) - Từ API list 2025
+    // Thử Gemma trước (có thể có quota riêng), sau đó Gemini
+    const GEMINI_MODELS = [
+        'gemma-3-4b-it',              // Gemma nhẹ, có thể quota riêng
+        'gemma-3-1b-it',              // Gemma siêu nhẹ
+        'gemini-2.0-flash',           // Ổn định, không thinking
+        'gemini-2.0-flash-001',       // Ổn định, không thinking  
+        'gemini-2.0-flash-exp',       // Experimental, không thinking
+    ];
+    
+    // Lưu model đang dùng và trạng thái rate limit
+    let currentAIModel = null;
+    let rateLimitUntil = 0;
+    
+    async function callGeminiAPI(prompt) {
+        if (!isAIConfigured()) {
+            console.log('AI not configured, skipping AI check');
+            return null;
+        }
+        
+        // Kiểm tra rate limit
+        const now = Date.now();
+        if (rateLimitUntil > now) {
+            const waitSec = Math.ceil((rateLimitUntil - now) / 1000);
+            console.warn(`⏳ Rate limited. Chờ ${waitSec}s...`);
+            return { rateLimited: true, waitSeconds: waitSec };
+        }
+        
+        const apiKey = AI_CONFIG.GEMINI_API_KEY;
+        const models = AI_CONFIG.MODEL ? [AI_CONFIG.MODEL, ...GEMINI_MODELS] : GEMINI_MODELS;
+        
+        for (const model of models) {
+            try {
+                console.log(`🔄 Trying model: ${model}`);
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), AI_CONFIG.TIMEOUT || 15000);
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            temperature: 0.1,
+                            maxOutputTokens: 1024,
+                            candidateCount: 1
+                        }
+                    }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    const errorMsg = errorData.error?.message || 'Unknown error';
+                    
+                    // Xử lý rate limit (429)
+                    if (response.status === 429) {
+                        // Trích xuất thời gian chờ từ error message
+                        const waitMatch = errorMsg.match(/retry in (\d+)/i);
+                        const waitSec = waitMatch ? parseInt(waitMatch[1]) + 5 : 65;
+                        rateLimitUntil = Date.now() + (waitSec * 1000);
+                        console.warn(`⏳ Rate limit hit. Chờ ${waitSec}s trước khi thử lại.`);
+                        return { rateLimited: true, waitSeconds: waitSec };
+                    }
+                    
+                    console.warn(`❌ Model ${model} failed:`, errorMsg);
+                    continue; // Thử model tiếp theo
+                }
+                
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                console.log(`✅ Success with model: ${model}`);
+                currentAIModel = model; // Lưu model thành công
+                return text.trim();
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.error('⏰ AI request timeout');
+                    return null;
+                }
+                console.warn(`❌ Model ${model} error:`, error.message);
+                continue; // Thử model tiếp theo
+            }
+        }
+        
+        console.error('❌ All AI models failed');
+        return null;
+    }
+    
+    async function checkChineseGrammarWithAI(userAnswer, correctAnswer, vietnameseMeaning, word) {
+        console.log('🔍 AI Check Request:', { userAnswer, correctAnswer, vietnameseMeaning, word });
+        
+        const prompt = `Bạn là giáo viên tiếng Trung. Kiểm tra câu tiếng Trung của học sinh.
+
+Từ vựng đang học: ${word}
+Nghĩa tiếng Việt cần dịch: ${vietnameseMeaning}
+Đáp án mẫu: ${correctAnswer}
+Học sinh viết: ${userAnswer}
+
+Yêu cầu:
+1. Kiểm tra câu của học sinh có ĐÚNG NGỮ PHÁP tiếng Trung không
+2. Kiểm tra câu có ĐÚNG NGHĨA với câu tiếng Việt không
+3. Không cần giống y hệt đáp án mẫu, chỉ cần đúng ngữ pháp và nghĩa
+
+Trả lời theo format JSON (CHỈ trả về JSON, không giải thích thêm):
+{"correct": true/false, "explanation": "giải thích ngắn gọn bằng tiếng Việt"}`;
+
+        const response = await callGeminiAPI(prompt);
+        
+        console.log('📥 AI Raw Response:', response);
+        console.log('📥 Response length:', response?.length || 0);
+        console.log('📥 Full response text:', JSON.stringify(response));
+        
+        if (!response) {
+            return { correct: false, explanation: 'Không thể kết nối AI. Vui lòng kiểm tra API key.', aiError: true };
+        }
+        
+        // Xử lý rate limit
+        if (response.rateLimited) {
+            return { 
+                correct: false, 
+                explanation: `⏳ API bị giới hạn. Vui lòng chờ ${response.waitSeconds} giây rồi thử lại.`, 
+                aiError: true,
+                rateLimited: true
+            };
+        }
+        
+        try {
+            // Remove markdown code blocks if present (```json ... ```)
+            let cleanResponse = response;
+            if (response.includes('```')) {
+                cleanResponse = response.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+                console.log('🧹 Cleaned response:', cleanResponse);
+                console.log('🧹 Cleaned length:', cleanResponse.length);
+            }
+            
+            // Extract JSON from response (in case there's extra text)
+            const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/);
+            console.log('🔎 JSON match found:', !!jsonMatch);
+            
+            if (jsonMatch) {
+                console.log('📋 Extracted JSON:', jsonMatch[0]);
+                const result = JSON.parse(jsonMatch[0]);
+                console.log('✅ Parsed Result:', result);
+                console.log('✅ Correct:', result.correct);
+                console.log('✅ Explanation:', result.explanation);
+                return {
+                    correct: result.correct === true,
+                    explanation: result.explanation || '',
+                    aiError: false
+                };
+            } else {
+                console.warn('⚠️ No JSON found in response');
+            }
+        } catch (e) {
+            console.error('❌ Failed to parse AI response:', response, e);
+        }
+        
+        // Fallback: try to detect if response contains positive indicators
+        const isPositive = response.includes('đúng') || response.includes('correct') || response.includes('true');
+        return {
+            correct: isPositive,
+            explanation: response.substring(0, 100),
+            aiError: false
+        };
+    }
+    
+    // ============================================
     // DOM Elements - Basic
+    // ============================================
     const nextBtn = document.getElementById('nextBtn');
     const statusEl = document.getElementById('status');
     const card = document.getElementById('card');
@@ -65,7 +242,9 @@ console.log('Quiz script loaded successfully - v2025');
     const tipsByMode = {
         quiz: '1–4 để chọn đáp án; Enter/Space để sang câu tiếp.',
         easy: 'Nhập pinyin (không dấu cũng được); Enter kiểm tra; Tab gợi ý.',
-        hard: 'Phần 1: Viết Hán tự. Phần 2: Dịch câu sang tiếng Trung.'
+        hard: isAIConfigured() 
+            ? '🤖 AI sẽ kiểm tra ngữ pháp! Không cần viết chính xác từng chữ.'
+            : 'Phần 1: Viết Hán tự. Phần 2: Dịch câu sang tiếng Trung. (Thêm API key để AI check)'
     };
 
     function setStatus(msg) { 
@@ -272,6 +451,13 @@ console.log('Quiz script loaded successfully - v2025');
         
         if (submitHardBtn) submitHardBtn.disabled = false;
         if (exampleBox) exampleBox.classList.add('hidden');
+        
+        // Reset AI feedback
+        const aiFeedbackEl = document.getElementById('ai-feedback');
+        if (aiFeedbackEl) {
+            aiFeedbackEl.classList.add('hidden');
+            aiFeedbackEl.innerHTML = '';
+        }
     }
 
     function renderQuestion() {
@@ -427,8 +613,11 @@ console.log('Quiz script loaded successfully - v2025');
         }
     }
 
-    function handleHardAnswer() {
-        if (answered) return;
+    // Track if AI is currently checking
+    let aiCheckingInProgress = false;
+    
+    async function handleHardAnswer() {
+        if (answered || aiCheckingInProgress) return;
         
         const item = data[currentIndex];
         const hanziAnswer = hanziInput?.value.trim() || '';
@@ -454,25 +643,84 @@ console.log('Quiz script loaded successfully - v2025');
             }
         }
         
-        // Check sentence (Part 2)
+        // Check sentence (Part 2) - WITH AI SUPPORT
         if (!sentenceCorrect) {
             if (!sentenceAnswer) {
                 setStatus('Vui lòng nhập câu tiếng Trung!');
                 sentenceInput?.focus();
                 return;
             }
+            
             const correctSentence = item.exHanzi || item.hanzi;
+            
+            // BƯỚC 1: So sánh chính xác trước (Hybrid - step 1)
             if (checkHanziAnswer(sentenceAnswer, correctSentence)) {
                 sentenceCorrect = true;
                 if (sentenceInput) sentenceInput.classList.add('correct');
                 if (sentenceStatus) { sentenceStatus.textContent = '✅'; sentenceStatus.className = 'input-status correct'; }
+                showAIFeedback(true, 'Chính xác! Câu trả lời khớp hoàn toàn.');
             } else {
-                if (sentenceInput) sentenceInput.classList.add('wrong');
-                if (sentenceStatus) { sentenceStatus.textContent = '❌'; sentenceStatus.className = 'input-status wrong'; }
-                setTimeout(() => { sentenceInput?.classList.remove('wrong'); }, 500);
-                setStatus('Câu tiếng Trung sai! Thử lại.');
-                return;
+                // BƯỚC 2: Không khớp → Gọi AI kiểm tra ngữ pháp (Hybrid - step 2)
+                if (isAIConfigured()) {
+                    aiCheckingInProgress = true;
+                    setStatus('🤖 AI đang kiểm tra ngữ pháp...');
+                    if (submitHardBtn) {
+                        submitHardBtn.disabled = true;
+                        submitHardBtn.textContent = '🔄 Đang kiểm tra...';
+                    }
+                    
+                    try {
+                        const vietnameseMeaning = item.exVi || item.meaningVi || '';
+                        const aiResult = await checkChineseGrammarWithAI(
+                            sentenceAnswer,
+                            correctSentence,
+                            vietnameseMeaning,
+                            item.hanzi
+                        );
+                        
+                        if (aiResult.correct) {
+                            // AI xác nhận đúng ngữ pháp!
+                            sentenceCorrect = true;
+                            if (sentenceInput) sentenceInput.classList.add('correct');
+                            if (sentenceStatus) { sentenceStatus.textContent = '✅'; sentenceStatus.className = 'input-status correct'; }
+                            showAIFeedback(true, aiResult.explanation || 'AI xác nhận: Câu đúng ngữ pháp!');
+                        } else {
+                            // AI xác nhận sai
+                            if (sentenceInput) sentenceInput.classList.add('wrong');
+                            if (sentenceStatus) { sentenceStatus.textContent = '❌'; sentenceStatus.className = 'input-status wrong'; }
+                            setTimeout(() => { sentenceInput?.classList.remove('wrong'); }, 500);
+                            
+                            if (aiResult.aiError) {
+                                showAIFeedback(false, '⚠️ ' + aiResult.explanation);
+                                setStatus('Không khớp đáp án. Kiểm tra API key để dùng AI.');
+                            } else {
+                                showAIFeedback(false, aiResult.explanation || 'Câu chưa đúng ngữ pháp hoặc nghĩa.');
+                                setStatus('AI: Câu chưa đúng! Thử lại.');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('AI check failed:', error);
+                        if (sentenceInput) sentenceInput.classList.add('wrong');
+                        setTimeout(() => { sentenceInput?.classList.remove('wrong'); }, 500);
+                        setStatus('Lỗi khi gọi AI. Thử lại.');
+                    } finally {
+                        aiCheckingInProgress = false;
+                        if (submitHardBtn) {
+                            submitHardBtn.disabled = false;
+                            submitHardBtn.textContent = 'Kiểm tra cả hai';
+                        }
+                    }
+                } else {
+                    // AI không được cấu hình → so sánh chính xác như cũ
+                    if (sentenceInput) sentenceInput.classList.add('wrong');
+                    if (sentenceStatus) { sentenceStatus.textContent = '❌'; sentenceStatus.className = 'input-status wrong'; }
+                    setTimeout(() => { sentenceInput?.classList.remove('wrong'); }, 500);
+                    setStatus('Câu tiếng Trung sai! Thử lại. (Cấu hình AI để kiểm tra ngữ pháp)');
+                    return;
+                }
             }
+            
+            if (!sentenceCorrect) return;
         }
         
         // Both correct!
@@ -489,6 +737,19 @@ console.log('Quiz script loaded successfully - v2025');
             showExampleInfo(item);
             if (nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.focus(); }
             setStatus(`Xuất sắc! Điểm: ${correctCount}/${questionCount}`);
+        }
+    }
+    
+    // Hiển thị feedback từ AI
+    function showAIFeedback(isCorrect, message) {
+        const aiFeedbackEl = document.getElementById('ai-feedback');
+        if (aiFeedbackEl) {
+            aiFeedbackEl.classList.remove('hidden', 'correct', 'wrong');
+            aiFeedbackEl.classList.add(isCorrect ? 'correct' : 'wrong');
+            
+            const icon = isCorrect ? '🤖✅' : '🤖❌';
+            const modelInfo = currentAIModel ? `<span class="ai-model">[${currentAIModel}]</span>` : '';
+            aiFeedbackEl.innerHTML = `<span class="ai-icon">${icon}</span><span class="ai-message">${message}</span>${modelInfo}`;
         }
     }
 
@@ -678,8 +939,27 @@ console.log('Quiz script loaded successfully - v2025');
         });
     }
 
+    function updateAIStatusUI() {
+        const btn = document.getElementById('ai-config-btn');
+        const icon = document.getElementById('ai-status-icon');
+        const text = document.getElementById('ai-status-text');
+        
+        if (btn && icon && text) {
+            if (isAIConfigured()) {
+                btn.className = 'ai-config-btn active';
+                icon.textContent = '🤖✅';
+                text.textContent = 'AI đã bật';
+            } else {
+                btn.className = 'ai-config-btn inactive';
+                icon.textContent = '🤖❌';
+                text.textContent = 'Cấu hình AI';
+            }
+        }
+    }
+    
     function init() {
         setupEventListeners();
+        updateAIStatusUI();
         setStatus('Chọn một bộ từ để bắt đầu.');
     }
 

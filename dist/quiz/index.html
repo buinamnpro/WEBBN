@@ -31,6 +31,10 @@
         <header>
             <h1>📖 Từ vựng HSK</h1>
             <p class="author">Tác giả: Bùi Giang Nam</p>
+            <button id="ai-config-btn" class="ai-config-btn" type="button" onclick="showApiKeyDialog(); location.reload();">
+                <span id="ai-status-icon">🤖</span>
+                <span id="ai-status-text">Cấu hình AI</span>
+            </button>
         </header>
 
         <main>
@@ -151,6 +155,12 @@
                     </div>
                     
                     <button id="submit-hard-btn" class="submit-btn full-width" type="button">Kiểm tra cả hai</button>
+                    
+                    <!-- AI Feedback Box -->
+                    <div id="ai-feedback" class="ai-feedback hidden">
+                        <span class="ai-icon">🤖</span>
+                        <span class="ai-message"></span>
+                    </div>
                 </div>
                 
                 <!-- Feedback for input modes -->
@@ -184,7 +194,8 @@
         </main>
     </div>
 
+    <script src="config.js"></script>
     <script src="version.js"></script>
-    <script src="script.js?v=ui2025"></script>
+    <script src="script.js?v=ai2025"></script>
   </body>
 </html>
